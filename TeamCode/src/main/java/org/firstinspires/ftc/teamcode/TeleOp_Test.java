@@ -21,7 +21,7 @@ public class TeleOp_Test extends LinearOpMode {
             double y = -gamepad1.left_stick_y; // Remember, Y stick is reversed!
             double x = gamepad1.left_stick_x;
             double rx = gamepad1.right_stick_x;
-
+ //
             double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1);
             double frontLeftPower = (y + x + rx) / denominator;
             double backLeftPower = (y - x + rx) / denominator;
