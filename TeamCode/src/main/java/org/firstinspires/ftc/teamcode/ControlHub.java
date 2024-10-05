@@ -19,6 +19,8 @@ public class ControlHub {
         backRightMotor = map.get(DcMotor.class, "backRightMotor");
 
         frontRightMotor.setDirection(DcMotor.Direction.REVERSE);
+
+        
     }
 
     public void motorAction(Gamepad gamepad) {
