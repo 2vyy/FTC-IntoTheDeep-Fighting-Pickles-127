@@ -14,6 +14,7 @@ public class TeleOp_Test extends LinearOpMode {
         ControlHub hub = new ControlHub();
         hub.init(hardwareMap);
 
+        //pauses until START is pressed
         waitForStart();
 
         while(opModeIsActive()) {
