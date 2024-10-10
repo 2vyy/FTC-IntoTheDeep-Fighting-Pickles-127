@@ -22,23 +22,24 @@ public class TestAuto extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         ControlHub hub = new ControlHub();
         Pose2d initialPose = new Pose2d(-13, -58, Math.toRadians(90));
-        MecanumDrive drive = new MecanumDrive(hardwareMap, initialPose);
         hub.init(hardwareMap, initialPose);
 
-        TrajectoryActionBuilder traj1 = drive.actionBuilder(initialPose)
+        TrajectoryActionBuilder traj1 = hub.drive.actionBuilder(initialPose)
             .splineTo(new Vector2d(-13, -33), Math.toRadians(90));
 
 
         //pauses until START is pressed
         waitForStart();
 
-        Action trajectoryActionChosen = traj1.build();
+//        Action trajectoryActionChosen = traj1.build();
 
         Actions.runBlocking(
-                //maybe put the build() in a seperate variable? idk :3
                 new ParallelAction(
-                        traj1.build(),
-                        hub.arm.extendOut()
+                        traj1.build(), //maybe put the build() in a seperate variable? idk :3
+                        hub.arm.extendOut(),
+                        new SequentialAction(
+                                hub.arm.retractBack()
+                        )
                 )
         );
 

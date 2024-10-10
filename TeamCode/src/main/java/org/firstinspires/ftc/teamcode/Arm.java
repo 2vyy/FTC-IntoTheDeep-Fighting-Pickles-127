@@ -4,24 +4,25 @@ import androidx.annotation.NonNull;
 
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
 
-//TODO: ExtendOut class and extendOut method could maybe be combined into one method. tldr; messy code :3
 public class Arm {
     private DcMotor baseArmMotor;
     private DcMotor extendArmMotor;
 
-    PIDController basePID;
-    PIDController armPID;
+    private CRServo roller;
 
-    int baseArm_TargetPosition = 0;
-    int extendArm_TargetPosition = 0;
+    private PIDController basePID;
+    private PIDController armPID;
 
     public Arm(HardwareMap map) {
         baseArmMotor = map.get(DcMotor.class, "baseArmMotor");
         extendArmMotor = map.get(DcMotor.class, "extendArmMotor");
+        roller = map.get(CRServo.class, "roller");
 
         baseArmMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         extendArmMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -29,66 +30,93 @@ public class Arm {
         baseArmMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         extendArmMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        basePID = new PIDController(0,0,0); //TODO: tune PID coefficients
-        armPID = new PIDController(0,0,0); //TODO: tune PID coefficients
+        basePID = new PIDController(
+                RobotConstants.BASE_ARM_kP,
+                RobotConstants.BASE_ARM_kI,
+                RobotConstants.BASE_ARM_kD
+        );
+        armPID = new PIDController(
+                RobotConstants.EXTEND_ARM_kP,
+                RobotConstants.EXTEND_ARM_kI,
+                RobotConstants.EXTEND_ARM_kD
+        );
     }
-
-//    public void extendOut() {
-//        if (basePID.getLastError() > 100 || armPID.getLastError() > 100) {
-//            baseArmMotor.setPower(
-//                    basePID.update(baseArm_TargetPosition, baseArmMotor.getCurrentPosition())
-//            );
-//
-//            extendArmMotor.setPower(
-//                    armPID.update(extendArm_TargetPosition, extendArmMotor.getCurrentPosition())
-//            );
-//
-//    }
-
-//    public class ExtendOut implements Action {
-//
-//        // This is has to return a boolean. The "Action" ends once it returns false.
-//        @Override
-//        public boolean run(@NonNull TelemetryPacket telemetryPacket) {
-//            baseArmMotor.setPower(
-//                    basePID.update(baseArm_TargetPosition, baseArmMotor.getCurrentPosition())
-//            );
-//
-//            extendArmMotor.setPower(
-//                    armPID.update(extendArm_TargetPosition, extendArmMotor.getCurrentPosition())
-//            );
-//
-//
-//            //If the last errors of both the PIDs are under 100 ticks, return false and end the action.
-//            if(basePID.getLastError() < 123123 && armPID.getLastError() < 123123) {
-//                return false;
-//            }
-//            return true;
-//
-//        }
-//
-//    }
-//    public Action extendOut() {
-//        return new ExtendOut();
-//    }
 
     public Action extendOut() {
         // This is has to return a boolean. The "Action" ends once it returns false.
         return packet -> {
             baseArmMotor.setPower(
-                basePID.calculate(baseArm_TargetPosition, baseArmMotor.getCurrentPosition())
+                basePID.calculate(
+                        RobotConstants.BASE_ARM_EXTEND_POS,
+                        baseArmMotor.getCurrentPosition()
+                )
             );
 
             extendArmMotor.setPower(
-                armPID.calculate(extendArm_TargetPosition, extendArmMotor.getCurrentPosition())
+                armPID.calculate(
+                        RobotConstants.EXTEND_ARM_EXTEND_POS,
+                        extendArmMotor.getCurrentPosition()
+                )
             );
 
             //TODO: 100 is a default tick count. Adjust to real motor constraints.
             //If the last errors of both the PIDs are under 100 ticks, return false and end the action.
-            if(basePID.getLastError() < 100 && armPID.getLastError() < 100) {
+            if(basePID.getLastError() < RobotConstants.PID_ERROR_TOLERANCE && armPID.getLastError() < RobotConstants.PID_ERROR_TOLERANCE) {
                 return false;
             }
             return true;
         };
     }
+
+    public Action retractBack() {
+        // This is has to return a boolean. The "Action" ends once it returns false.
+        return packet -> {
+            baseArmMotor.setPower(
+                    basePID.calculate(
+                            RobotConstants.BASE_ARM_REST_POS,
+                            baseArmMotor.getCurrentPosition()
+                    )
+            );
+
+            extendArmMotor.setPower(
+                    armPID.calculate(
+                            RobotConstants.EXTEND_ARM_REST_POS,
+                            extendArmMotor.getCurrentPosition()
+                    )
+            );
+
+            //TODO: 100 is a default tick count. Adjust to real motor constraints.
+            //If the last errors of both the PIDs are under 100 ticks, return false and end the action.
+            if(basePID.getLastError() < RobotConstants.PID_ERROR_TOLERANCE && armPID.getLastError() < RobotConstants.PID_ERROR_TOLERANCE) {
+                return false;
+            }
+            return true;
+        };
+    }
+
+    public Action rollInward() {
+        // This is has to return a boolean. The "Action" ends once it returns false.
+        return packet -> {
+            roller.setPower(1);
+            return false;
+        };
+    }
+
+    public Action rollOutward() {
+        // This is has to return a boolean. The "Action" ends once it returns false.
+        return packet -> {
+            roller.setPower(-1);
+            return false;
+        };
+    }
+
+    public Action stopRoller() {
+        // This is has to return a boolean. The "Action" ends once it returns false.
+        return packet -> {
+            roller.setPower(0);
+            return false;
+        };
+    }
+
+
 }
