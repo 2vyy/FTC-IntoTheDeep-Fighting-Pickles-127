@@ -1,24 +1,48 @@
 package org.firstinspires.ftc.teamcode;
 
 
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
+import com.acmerobotics.roadrunner.Action;
+import com.acmerobotics.roadrunner.Pose2d;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class ControlHub {
     public DcMotor frontLeftMotor;
     public DcMotor frontRightMotor;
     public DcMotor backLeftMotor;
     public DcMotor backRightMotor;
+    Arm arm;
+    public Servo roller;
+    public Servo basketFlipper;
+    public FtcDashboard dash;
+    public List<Action> runningActions;
+//    MecanumDrive drive;
 
-    public void init(HardwareMap map) {
+    public void init(HardwareMap map, Pose2d initialPose) {
         frontLeftMotor = map.get(DcMotor.class, "frontLeftMotor");
         frontRightMotor = map.get(DcMotor.class, "frontRightMotor");
         backLeftMotor = map.get(DcMotor.class, "backLeftMotor");
         backRightMotor = map.get(DcMotor.class, "backRightMotor");
 
         frontRightMotor.setDirection(DcMotor.Direction.REVERSE);
+
+        dash = FtcDashboard.getInstance();
+        runningActions = new ArrayList<>();
+
+//        drive = new MecanumDrive(map, initialPose);
+
+        roller = map.get(Servo.class, "roller");
+        basketFlipper = map.get(Servo.class, "basketFlipper");
+
+        arm = new Arm(map);
     }
 
     public void motorAction(Gamepad gamepad) {
