@@ -15,7 +15,7 @@ public class ControlHub {
     private Servo basketFlipper;
 
     Arm arm;
-    MecanumDrive drive;
+    MecanumDrive drive; //Roadrunner class, required for trajectories and stuff
 
     public void init(HardwareMap map, Pose2d initialPose) {
         frontLeftMotor = map.get(DcMotor.class, "frontLeftMotor");

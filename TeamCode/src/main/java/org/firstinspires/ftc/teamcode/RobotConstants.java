@@ -2,7 +2,8 @@ package org.firstinspires.ftc.teamcode;
 
 import com.acmerobotics.dashboard.config.Config;
 
-// Global constants, to be tuned in FTCDashboard
+// Magic numbers are bad. Global, static constants are good. Also, these can be live-tuned in FTC-Dashboard because of @Config
+// See https://acmerobotics.github.io/ftc-dashboard/features.html
 @Config
 public class RobotConstants {
     public static int PID_ERROR_TOLERANCE = 0;

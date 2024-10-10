@@ -13,7 +13,9 @@ public class TeleOp_Test extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         ControlHub hub = new ControlHub();
-        Pose2d initialPose = new Pose2d(-23, -10, Math.toRadians(0);
+        // initialPose is just here to make hub.init(HardwareMap map, Pose2d initialPose) work
+        // unless you want to do roadrunner stuff in teleop :troll_face:
+        Pose2d initialPose = new Pose2d(-23, -10, Math.toRadians(0));
         hub.init(hardwareMap, initialPose);
 
         //pauses until START is pressed
