@@ -1,15 +1,15 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-// implementation of PID Control for a motor.
+// implementation of PIDF Control for a motor.
 // Refer to https://youtu.be/4Y7zG48uHRo?si=2XhRVeDYf7zzIsRo for a conceptual introduction
 // Refer to https://www.ctrlaltftc.com/ for more in-depth concepts and code explanations
-public class PIDController {
+public class PIDFController {
     private double Kp = 0;
     private double Ki = 0;
     private double Kd = 0;
+    private double Kf = 0; //Kf basically counteracts the force of gravity so the position stays even when power = 0
 
     //Remember: power is between -1 and 1 for a motor. Everything should be a double to allow for decimals.
 
@@ -18,10 +18,11 @@ public class PIDController {
     private ElapsedTime timer = new ElapsedTime();
 
     //object constructor. Takes in P, I, and D constants tuned for that specific motor. refer to https://youtu.be/E6H6Nqe6qJo?si=nHZ2z9U3J81rZ-2E&t=438 for tuning
-    public PIDController(double _Kp, double _Ki, double _Kd) {
+    public PIDFController(double _Kp, double _Ki, double _Kd, double _Kf) {
         Kp = _Kp;
         Ki = _Ki;
         Kd = _Kd;
+        Kf = _Kf;
     }
 
     // params: target is goal position, state is current position (ticks)
@@ -36,7 +37,7 @@ public class PIDController {
         // sum of all error over time
         integralSum = integralSum + (error * timer.seconds());
 
-        double out = (Kp * error) + (Ki * integralSum) + (Kd * derivative);
+        double out = (Kp * error) + (Ki * integralSum) + (Kd * derivative) + Kf;
 
         lastError = error;
 

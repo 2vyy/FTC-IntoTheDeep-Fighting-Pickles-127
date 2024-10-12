@@ -141,8 +141,8 @@ public class MeepMeepTesting {
         meepMeep.setBackground(MeepMeep.Background.FIELD_INTO_THE_DEEP_JUICE_DARK)
         .setDarkMode(true)
         .setBackgroundAlpha(0.95f)
-        //.addEntity(myBot)
-        .addEntity(myBot1);
+        .addEntity(myBot);
+//        .addEntity(myBot1);
         //.addEntity(teleBot);
         meepMeep.start();
                 //.start();

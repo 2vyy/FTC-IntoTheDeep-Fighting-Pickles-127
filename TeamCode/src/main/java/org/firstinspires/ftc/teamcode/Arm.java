@@ -1,14 +1,9 @@
 package org.firstinspires.ftc.teamcode;
 
-import androidx.annotation.NonNull;
-
-import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.Servo;
 
 public class Arm {
     private DcMotor baseArmMotor;
@@ -16,8 +11,8 @@ public class Arm {
 
     private CRServo roller;
 
-    private PIDController basePID;
-    private PIDController armPID;
+    private PIDFController basePID;
+    private PIDFController armPID;
 
     //Simple constructor for an Arm object.
     public Arm(HardwareMap map) {
@@ -34,15 +29,17 @@ public class Arm {
         //these motors probably need to be reversed but all good :3
 
         //We have 2 motors, so we need 2 PIDs
-        basePID = new PIDController(
+        basePID = new PIDFController(
                 RobotConstants.BASE_ARM_kP,
                 RobotConstants.BASE_ARM_kI,
-                RobotConstants.BASE_ARM_kD
+                RobotConstants.BASE_ARM_kD,
+                RobotConstants.BASE_ARM_kF
         );
-        armPID = new PIDController(
+        armPID = new PIDFController(
                 RobotConstants.EXTEND_ARM_kP,
                 RobotConstants.EXTEND_ARM_kI,
-                RobotConstants.EXTEND_ARM_kD
+                RobotConstants.EXTEND_ARM_kD,
+                RobotConstants.EXTEND_ARM_kF
         );
     }
 

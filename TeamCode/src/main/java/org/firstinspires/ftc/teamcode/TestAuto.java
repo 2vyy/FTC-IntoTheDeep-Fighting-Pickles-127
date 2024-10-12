@@ -32,12 +32,13 @@ public class TestAuto extends LinearOpMode {
         waitForStart();
 
         Actions.runBlocking(
-                new ParallelAction(
-                        traj1.build(), // .build() converts the Trajectory into an Action.
-                        hub.arm.extendOut(),
-                        new SequentialAction(
-                                hub.arm.retractBack()
-                        )
+                //This follows traj1 and extends the armout THEN retracts the arm back
+                new SequentialAction(
+                        new ParallelAction(
+                                traj1.build(), // .build() converts the Trajectory into an Action.
+                                hub.arm.extendOut()
+                        ),
+                        hub.arm.retractBack()
                 )
         );
         
