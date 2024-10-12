@@ -30,6 +30,6 @@ public class RobotConstants {
     public static int SLIDE_EXTEND_POS = 0;
     public static int SLIDE_REST_POS = 0;
     // basketFlipper
-    public static double BASKET_FLIPPER_UP = 0;//TODO: tune servo positions
-    public static double BASKET_FLIPPER_DOWN = 0;
+    public static double BASKET_FLIPPER_OUT = 0;//TODO: tune servo positions
+    public static double BASKET_FLIPPER_IN = 0;
 }

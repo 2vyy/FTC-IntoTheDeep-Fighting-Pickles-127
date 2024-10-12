@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 
 import com.acmerobotics.roadrunner.Action;
+import com.acmerobotics.roadrunner.InstantAction;
 import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.Pose2d;
 
@@ -36,9 +37,10 @@ public class TestAuto extends LinearOpMode {
                 new SequentialAction(
                         new ParallelAction(
                                 traj1.build(), // .build() converts the Trajectory into an Action.
-                                hub.arm.extendOut()
+                                hub.arm.A_extendOut()
                         ),
-                        hub.arm.retractBack()
+                        hub.arm.A_retractBack(),
+                        hub.arm.A_rollOutward()
                 )
         );
         
