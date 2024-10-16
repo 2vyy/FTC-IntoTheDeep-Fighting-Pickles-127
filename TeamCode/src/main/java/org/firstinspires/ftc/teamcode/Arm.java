@@ -9,14 +9,9 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-public class Arm {
-    public enum ArmState {
-        ARM_START,
-        ARM_EXTEND,
-        ARM_TRANSFER,
-    }
+import java.util.List;
 
-    ArmState armState = ArmState.ARM_START;
+public class Arm {
 
     private DcMotor baseArmMotor;
     private DcMotor extendArmMotor;
@@ -25,6 +20,14 @@ public class Arm {
 
     private PIDFController basePID;
     private PIDFController armPID;
+
+    private enum ArmState {
+        ARM_START,
+        ARM_EXTEND,
+        ARM_TRANSFER,
+    }
+
+    ArmState armState = ArmState.ARM_START;
 
     //Simple constructor for an Arm object.
     public Arm(HardwareMap map) {
@@ -57,95 +60,68 @@ public class Arm {
 
     //Roadrunner Action - This will constantly run *until* it returns false
     //Extend both motors out to their EXTEND_POS
-    public Action A_extendOut() {
+    public Action extendOut() {
         // This is has to return a boolean. The "Action" ends once it returns false.
-        return packet -> { // this weird -> symbol is called a lamdba if you're curious
-            return extendOut();
+        return new Action() {
+            @Override
+            public boolean run(@NonNull TelemetryPacket telemetryPacket) {
+                baseArmMotor.setPower(
+                        basePID.calculate(
+                                RobotConstants.BASE_ARM_EXTEND_POS,
+                                baseArmMotor.getCurrentPosition()
+                        )
+                );
+
+                extendArmMotor.setPower(
+                        armPID.calculate(
+                                RobotConstants.EXTEND_ARM_EXTEND_POS,
+                                extendArmMotor.getCurrentPosition()
+                        )
+                );
+
+                //If the last errors of both the PIDs are under PID_ERROR_TOLERANCE ticks, the motors are close enough so return false and end the action.
+                if(withinTolerance()) {
+                    return false;
+                }
+                //if not, return true. Roadrunner will then repeat the action
+                return true;
+            }
         };
     }
 
-    public boolean extendOut() {
-        baseArmMotor.setPower(
-                basePID.calculate(
-                        RobotConstants.BASE_ARM_EXTEND_POS,
-                        baseArmMotor.getCurrentPosition()
-                )
-        );
-
-        extendArmMotor.setPower(
-                armPID.calculate(
-                        RobotConstants.EXTEND_ARM_EXTEND_POS,
-                        extendArmMotor.getCurrentPosition()
-                )
-        );
-
-        //If the last errors of both the PIDs are under PID_ERROR_TOLERANCE ticks, the motors are close enough -> return false and end the action.
-        if(basePID.getLastError() < RobotConstants.PID_ERROR_TOLERANCE && armPID.getLastError() < RobotConstants.PID_ERROR_TOLERANCE) {
-            return false;
-        }
-        //if not, return true. Roadrunner will then repeat the action
-        return true;
-    }
-
-    public Action A_retractBack() {
+    //Roadrunner Action - This will constantly run *until* it returns false
+    //Extend both motors out to their EXTEND_POS
+    public Action retractBack() {
         // This is has to return a boolean. The "Action" ends once it returns false.
-        return packet -> {
-            return retractBack();
+        return new Action() {
+            @Override
+            public boolean run(@NonNull TelemetryPacket telemetryPacket){
+                baseArmMotor.setPower(
+                        basePID.calculate(
+                                RobotConstants.BASE_ARM_REST_POS,
+                                baseArmMotor.getCurrentPosition()
+                        )
+                );
+
+                extendArmMotor.setPower(
+                        armPID.calculate(
+                                RobotConstants.EXTEND_ARM_REST_POS,
+                                extendArmMotor.getCurrentPosition()
+                        )
+                );
+
+                //If the last errors of both the PIDs are under PID_ERROR_TOLERANCE ticks, the motors are close enough -> return false and end the action.
+                if (withinTolerance()) {
+                    return false;
+                }
+                return true;
+            }
         };
     }
 
-    public boolean retractBack() {
-        baseArmMotor.setPower(
-                basePID.calculate(
-                        RobotConstants.BASE_ARM_REST_POS,
-                        baseArmMotor.getCurrentPosition()
-                )
-        );
-
-        extendArmMotor.setPower(
-                armPID.calculate(
-                        RobotConstants.EXTEND_ARM_REST_POS,
-                        extendArmMotor.getCurrentPosition()
-                )
-        );
-
-        //If the last errors of both the PIDs are under PID_ERROR_TOLERANCE ticks, the motors are close enough -> return false and end the action.
-        if(basePID.getLastError() < RobotConstants.PID_ERROR_TOLERANCE && armPID.getLastError() < RobotConstants.PID_ERROR_TOLERANCE) {
-            return false;
-        }
-        return true;
-    };
 
 
-    public Action rollInward() {
-        // This is has to return a boolean. The "Action" ends once it returns false.
-        return packet -> {
-            roller.setPower(1);
-            return false; //This is an instant action that doesn't need to wait on anything, so we can return false immediately
-        };
-    }
-
-    public Action A_rollOutward() {
-        // This is has to return a boolean. The "Action" ends once it returns false.
-        return packet -> {
-            rollOutward();
-            return false;
-        };
-    }
-
-    public void rollOutward() {
-        roller.setPower(-1);
-    }
-
-    public Action stopRoller() {
-        // This is has to return a boolean. The "Action" ends once it returns false.
-        return packet -> {
-            roller.setPower(0);
-            return false;
-        };
-    }
-
-    public void armAction(Gamepad gamepad) {
+    public void armAction(Gamepad gamepad, List<Action> teleActions) {
         switch(armState) {
             case ARM_START:
                 if(gamepad.a) {
@@ -153,28 +129,38 @@ public class Arm {
                 }
                 break;
             case ARM_EXTEND:
-                boolean extended = extendOut();
-                if(!extended && gamepad.a) {
+                teleActions.add(extendOut());
+                if(withinTolerance() && gamepad.a) {
                     rollInward();
                 }
 
                 if(gamepad.b) {
-                    armState = ArmState.ARM_TRANSFER;
+                    armState = Arm.ArmState.ARM_TRANSFER;
                 }
                 break;
             case ARM_TRANSFER:
-                boolean retracted = retractBack();
-                if(!retracted) {
+                teleActions.add(retractBack());
+                if(withinTolerance()) {
                     rollOutward();
                 }
                 if(gamepad.b) {
-                    stopRoller();
-                    armState = ArmState.ARM_START;
+                    stopRolling();
+                    armState = Arm.ArmState.ARM_START;
                 }
                 break;
             default:
-                armState = ArmState.ARM_START;
+                armState = Arm.ArmState.ARM_START;
         }
     }
+
+    public void rollInward() {roller.setPower(-1);}
+    public void rollOutward() {roller.setPower(1);}
+    public void stopRolling() {roller.setPower(-0);}
+
+    private boolean withinTolerance() {
+        return basePID.getLastError() < RobotConstants.PID_ERROR_TOLERANCE && armPID.getLastError() < RobotConstants.PID_ERROR_TOLERANCE;
+    }
+
+
 }
 //

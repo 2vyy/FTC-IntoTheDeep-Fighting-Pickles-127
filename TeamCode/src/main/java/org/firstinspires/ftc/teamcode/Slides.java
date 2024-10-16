@@ -1,5 +1,8 @@
 package org.firstinspires.ftc.teamcode;
 
+import androidx.annotation.NonNull;
+
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -28,54 +31,58 @@ public class Slides {
         );
     }
 
+    //Roadrunner Action - This will constantly run *until* it returns false
+    //Extend both motors out to their EXTEND_POS
     public Action slideUp() {
-        //has to return boolean
-        return packet -> {
+        // This is has to return a boolean. The "Action" ends once it returns false.
+        return new Action() {
+            @Override
+            public boolean run(@NonNull TelemetryPacket telemetryPacket) {
+                slideMotor.setPower(
+                        slidePID.calculate(
+                                RobotConstants.SLIDE_EXTEND_POS,
+                                slideMotor.getCurrentPosition()
+                        )
+                );
 
-            //optimal power
-            slideMotor.setPower(
-                    slidePID.calculate(
-                            RobotConstants.SLIDE_EXTEND_POS,
-                            slideMotor.getCurrentPosition()
-                    )
-            );
-
-            if(slidePID.getLastError() < RobotConstants.PID_ERROR_TOLERANCE) {
-                return false;
+                //If the last errors of both the PIDs are under PID_ERROR_TOLERANCE ticks, the motors are close enough so return false and end the action.
+                if(inTolerance()) {
+                    return false;
+                }
+                //if not, return true. Roadrunner will then repeat the action
+                return true;
             }
-            return true;
         };
     }
 
+    //Roadrunner Action - This will constantly run *until* it returns false
+    //Extend both motors out to their EXTEND_POS
     public Action slideDown() {
-        //has to return boolean
-        return packet -> {
-            slideMotor.setPower(
-                    slidePID.calculate(
-                            RobotConstants.SLIDE_REST_POS,
-                            slideMotor.getCurrentPosition()
-                    )
-            );
+        // This is has to return a boolean. The "Action" ends once it returns false.
+        return new Action() {
+            @Override
+            public boolean run(@NonNull TelemetryPacket telemetryPacket) {
+                slideMotor.setPower(
+                        slidePID.calculate(
+                                RobotConstants.SLIDE_REST_POS,
+                                slideMotor.getCurrentPosition()
+                        )
+                );
 
-            if(slidePID.getLastError() < RobotConstants.PID_ERROR_TOLERANCE) {
-                return false;
+                //If the last errors of both the PIDs are under PID_ERROR_TOLERANCE ticks, the motors are close enough so return false and end the action.
+                if(inTolerance()) {
+                    return false;
+                }
+                //if not, return true. Roadrunner will then repeat the action
+                return true;
             }
-
-            return true;
         };
     }
 
-    public Action flipOut() {
-        return packet -> {
-            basketFlipper.setPosition(RobotConstants.BASKET_FLIPPER_OUT);
-            return false;
-        };
-    }
+    public void flipOut() {basketFlipper.setPosition(RobotConstants.BASKET_FLIPPER_OUT);}
+    public void flipIn() {basketFlipper.setPosition(RobotConstants.BASKET_FLIPPER_IN);}
 
-    public Action flipIn() {
-        return packet -> {
-            basketFlipper.setPosition(RobotConstants.BASKET_FLIPPER_IN);
-            return false;
-        };
+    private boolean inTolerance() {
+        return slidePID.getLastError() < RobotConstants.PID_ERROR_TOLERANCE;
     }
 }

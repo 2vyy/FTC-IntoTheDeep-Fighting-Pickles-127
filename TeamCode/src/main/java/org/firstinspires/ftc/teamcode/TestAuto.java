@@ -37,10 +37,10 @@ public class TestAuto extends LinearOpMode {
                 new SequentialAction(
                         new ParallelAction(
                                 traj1.build(), // .build() converts the Trajectory into an Action.
-                                hub.arm.A_extendOut()
+                                hub.arm.extendOut()
                         ),
-                        hub.arm.A_retractBack(),
-                        hub.arm.A_rollOutward()
+                        hub.arm.retractBack(),
+                        new InstantAction(() -> hub.arm.stopRolling())
                 )
         );
         
