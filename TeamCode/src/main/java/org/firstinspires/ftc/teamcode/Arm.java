@@ -19,7 +19,7 @@ public class Arm {
     private CRServo roller;
 
     private PIDFController basePID;
-    private PIDFController armPID;
+    private PIDFController extendPID;
 
     private enum ArmState {
         ARM_START,
@@ -50,7 +50,7 @@ public class Arm {
                 RobotConstants.BASE_ARM_kD,
                 RobotConstants.BASE_ARM_kF
         );
-        armPID = new PIDFController(
+        extendPID = new PIDFController(
                 RobotConstants.EXTEND_ARM_kP,
                 RobotConstants.EXTEND_ARM_kI,
                 RobotConstants.EXTEND_ARM_kD,
@@ -73,18 +73,17 @@ public class Arm {
                 );
 
                 extendArmMotor.setPower(
-                        armPID.calculate(
+                        extendPID.calculate(
                                 RobotConstants.EXTEND_ARM_EXTEND_POS,
                                 extendArmMotor.getCurrentPosition()
                         )
                 );
 
-                //If the last errors of both the PIDs are under PID_ERROR_TOLERANCE ticks, the motors are close enough so return false and end the action.
-                if(withinTolerance()) {
-                    return false;
+                //If the last errors of both the PIDs are under PID_ERROR_TOLERANCE ticks, the motors are close enough -> return false and end the action.
+                if (!inTolerance()) {
+                    return false; //repeat
                 }
-                //if not, return true. Roadrunner will then repeat the action
-                return true;
+                return true; //end action
             }
         };
     }
@@ -104,48 +103,46 @@ public class Arm {
                 );
 
                 extendArmMotor.setPower(
-                        armPID.calculate(
+                        extendPID.calculate(
                                 RobotConstants.EXTEND_ARM_REST_POS,
                                 extendArmMotor.getCurrentPosition()
                         )
                 );
 
                 //If the last errors of both the PIDs are under PID_ERROR_TOLERANCE ticks, the motors are close enough -> return false and end the action.
-                if (withinTolerance()) {
-                    return false;
+                if (!inTolerance()) {
+                    return false; //repeat
                 }
-                return true;
+                return true; //end action
             }
         };
     }
-
-
 
     public void armAction(Gamepad gamepad, List<Action> teleActions) {
         switch(armState) {
             case ARM_START:
                 if(gamepad.a) {
                     armState = ArmState.ARM_EXTEND;
+                    teleActions.add(extendOut());
                 }
                 break;
             case ARM_EXTEND:
-                teleActions.add(extendOut());
-                if(withinTolerance() && gamepad.a) {
+                if(inTolerance() && gamepad.a) {
                     rollInward();
                 }
 
                 if(gamepad.b) {
-                    armState = Arm.ArmState.ARM_TRANSFER;
+                    armState = ArmState.ARM_TRANSFER;
+                    teleActions.add(retractBack());
                 }
                 break;
             case ARM_TRANSFER:
-                teleActions.add(retractBack());
-                if(withinTolerance()) {
+                if(inTolerance()) {
                     rollOutward();
                 }
                 if(gamepad.b) {
                     stopRolling();
-                    armState = Arm.ArmState.ARM_START;
+                    armState = ArmState.ARM_START;
                 }
                 break;
             default:
@@ -157,8 +154,8 @@ public class Arm {
     public void rollOutward() {roller.setPower(1);}
     public void stopRolling() {roller.setPower(-0);}
 
-    private boolean withinTolerance() {
-        return basePID.getLastError() < RobotConstants.PID_ERROR_TOLERANCE && armPID.getLastError() < RobotConstants.PID_ERROR_TOLERANCE;
+    private boolean inTolerance() {
+        return basePID.getLastError() < RobotConstants.PID_ERROR_TOLERANCE && extendPID.getLastError() < RobotConstants.PID_ERROR_TOLERANCE;
     }
 
 

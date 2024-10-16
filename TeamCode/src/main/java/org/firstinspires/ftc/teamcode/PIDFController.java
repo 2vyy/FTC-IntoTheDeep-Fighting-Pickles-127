@@ -13,7 +13,7 @@ public class PIDFController {
 
     //Remember: power is between -1 and 1 for a motor. Everything should be a double to allow for decimals.
 
-    private double lastError;
+    private double lastError = 0;
     private double integralSum = 0;
     private ElapsedTime timer = new ElapsedTime();
 
