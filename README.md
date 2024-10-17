@@ -9,5 +9,5 @@
 * [FTCDashboard (used for live variable tuning)](https://acmerobotics.github.io/ftc-dashboard/features.html)
 * [Roadrunner Actions](https://rr.brott.dev/docs/v1-0/actions/)
 * [Roadrunner TeleOp Actions](https://rr.brott.dev/docs/v1-0/guides/teleop-actions/)
-* [TeleOp Drivetrian Code](https://gm0.org/en/latest/docs/software/tutorials/mecanum-drive.html)
+* [TeleOp Drivetrain Code](https://gm0.org/en/latest/docs/software/tutorials/mecanum-drive.html)
 * [Finite State Machine Explanation](https://gm0.org/en/latest/docs/software/concepts/finite-state-machines.html)
