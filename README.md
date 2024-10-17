@@ -11,3 +11,8 @@
 * [Roadrunner TeleOp Actions](https://rr.brott.dev/docs/v1-0/guides/teleop-actions/)
 * [TeleOp Drivetrain Code](https://gm0.org/en/latest/docs/software/tutorials/mecanum-drive.html)
 * [Finite State Machine Explanation](https://gm0.org/en/latest/docs/software/concepts/finite-state-machines.html)
+* [EasyOpenCV Library (example folder is very useful)](https://github.com/OpenFTC/EasyOpenCV)
+* [EasyOpenCV Simulator](https://deltacv.gitbook.io/eocv-sim/introduction/opencv-and-easyopencv)
+* [OpenCV Contour Docs](https://docs.opencv.org/3.4/d3/d05/tutorial_py_table_of_contents_contours.html)
+
+
