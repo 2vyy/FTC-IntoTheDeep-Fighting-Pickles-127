@@ -35,10 +35,10 @@ public class TeleOp_Test extends LinearOpMode {
         Pose2d initialPose = new Pose2d(-23, -10, Math.toRadians(0));
         hub.init(hardwareMap, initialPose);
 
-        frontLeftMotor = hardwareMap.get(DcMotor.class, "frontLeftMotor");
-        frontRightMotor = hardwareMap.get(DcMotor.class, "frontRightMotor");
-        backLeftMotor = hardwareMap.get(DcMotor.class, "backLeftMotor");
-        backRightMotor = hardwareMap.get(DcMotor.class, "backRightMotor");
+        frontLeftMotor = hardwareMap.get(DcMotor.class, "frontLeft");
+        frontRightMotor = hardwareMap.get(DcMotor.class, "frontRight");
+        backLeftMotor = hardwareMap.get(DcMotor.class, "backLeft");
+        backRightMotor = hardwareMap.get(DcMotor.class, "backRight");
 
         frontRightMotor.setDirection(DcMotor.Direction.REVERSE);
 
@@ -46,9 +46,11 @@ public class TeleOp_Test extends LinearOpMode {
         waitForStart();
 
         while(opModeIsActive()) {
-            rrAction();
-            motorAction();
-            hub.arm.armAction(gamepad1, runningActions);
+            //rrAction();
+            //motorAction();
+            //hub.arm.armAction(gamepad1, runningActions);
+
+
         }
     }
 
