@@ -60,10 +60,10 @@ public class TestAuto extends LinearOpMode {
         waitForStart();
 
         drive(24);
-//        armForward();
-//        while(extendArmMotor.isBusy()) {
-//
-//        }
+        armForward();
+        while(extendArmMotor.isBusy()) {
+
+        }
 
 
 
@@ -104,14 +104,14 @@ public class TestAuto extends LinearOpMode {
 
         while(opModeIsActive() && (frontLeftMotor.isBusy() || frontRightMotor.isBusy() || backRightMotor.isBusy() || backLeftMotor.isBusy())) {
             telemetry.addLine(frontLeftMotor.getCurrentPosition()+"");
-            telemetry.addLine(TICKS_PER_INCH+"");
+            telemetry.addLine(frontLeftMotor.getTargetPosition()+"");
             telemetry.update();
-            if(frontLeftMotor.getCurrentPosition() > (int) (inches*TICKS_PER_INCH)) {
-                frontLeftMotor.setPower(0);
-                frontRightMotor.setPower(0);
-                backRightMotor.setPower(0);
-                backLeftMotor.setPower(0);
-            }
         }
+
+        frontLeftMotor.setPower(0);
+        frontRightMotor.setPower(0);
+        backRightMotor.setPower(0);
+        backLeftMotor.setPower(0);
+
     }
 }
