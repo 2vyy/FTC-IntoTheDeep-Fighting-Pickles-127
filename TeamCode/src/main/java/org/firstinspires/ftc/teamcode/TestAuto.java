@@ -31,21 +31,15 @@ public class TestAuto extends LinearOpMode {
     public CRServo roller;
     public boolean initialized = false;
     public ElapsedTime timer = new ElapsedTime();
-
+    private final double MOTOR_TICKS_PER_REV = 288;
+    private final double MOTOR_CIRCUMFERENCE = 3.14;
+    private final double MOTOR_TICKS_PER_INCH = MOTOR_TICKS_PER_REV/MOTOR_CIRCUMFERENCE;
+    private final double TICKS_PER_REV = 28 * 20;
+    private final double CIRCUMFERENCE = 3.25;
+    private final double TICKS_PER_INCH = 1200.0 / 24.0;
 
     @Override
     public void runOpMode() throws InterruptedException {
-
-//        ControlHub hub = new ControlHub();
-//        Pose2d initialPose = new Pose2d(-13, -58, Math.toRadians(90)); //Position that this auto SHOULD be started at
-//        hub.init(hardwareMap, initialPose); //initialPose is needed for hub.drive to be created.
-//
-//        // Using hub.drive.actionBuilder and the initialPose to make a roadrunner trajectory.
-//        TrajectoryActionBuilder traj1 = hub.drive.actionBuilder(initialPose)
-//            .splineTo(new Vector2d(-13, -33), Math.toRadians(90)); // Same code as in MeepMeep!
-
-        //pauses until START is pressed
-
         frontLeftMotor = hardwareMap.get(DcMotor.class, "frontLeft");
         frontRightMotor = hardwareMap.get(DcMotor.class, "frontRight");
         backLeftMotor = hardwareMap.get(DcMotor.class, "backLeft");
@@ -65,25 +59,12 @@ public class TestAuto extends LinearOpMode {
 
         waitForStart();
 
-        armForward();
-        while(extendArmMotor.isBusy()) {
+        drive(24);
+//        armForward();
+//        while(extendArmMotor.isBusy()) {
+//
+//        }
 
-        }
-
-//        Actions.runBlocking(
-//                //This follows traj1 and extends the armout THEN retracts the arm back
-//                new SequentialAction(
-//                        new ParallelAction(
-//                                traj1.build(), // .build() converts the Trajectory into an Action.
-//                                hub.arm.extendOut()
-//                        ),
-//                        hub.arm.retractBack(),
-//                        new InstantAction(() -> hub.arm.stopRolling())
-//                )
-//        );
-        
-        // this might be better ??? dont look at this
-        // Action trajectoryActionChosen = traj1.build();
 
 
 
@@ -96,6 +77,40 @@ public class TestAuto extends LinearOpMode {
             if(extendArmMotor.getCurrentPosition()<-140) {
                 initialized = true;
                 extendArmMotor.setPower(0);
+            }
+        }
+    }
+
+    public void drive(double inches) { // a little off, might need increase
+        frontLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        frontRightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        backLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        backRightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        frontLeftMotor.setPower(0.25);
+        frontRightMotor.setPower(0.25);
+        backRightMotor.setPower(0.25);
+        backLeftMotor.setPower(0.25);
+
+        frontLeftMotor.setTargetPosition((int) (inches*TICKS_PER_INCH));
+        frontRightMotor.setTargetPosition((int) (inches*TICKS_PER_INCH));
+        backLeftMotor.setTargetPosition((int) (inches*TICKS_PER_INCH));
+        backRightMotor.setTargetPosition((int) (inches*TICKS_PER_INCH));
+
+        frontLeftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        frontRightMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        backLeftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        backRightMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        while(opModeIsActive() && (frontLeftMotor.isBusy() || frontRightMotor.isBusy() || backRightMotor.isBusy() || backLeftMotor.isBusy())) {
+            telemetry.addLine(frontLeftMotor.getCurrentPosition()+"");
+            telemetry.addLine(TICKS_PER_INCH+"");
+            telemetry.update();
+            if(frontLeftMotor.getCurrentPosition() > (int) (inches*TICKS_PER_INCH)) {
+                frontLeftMotor.setPower(0);
+                frontRightMotor.setPower(0);
+                backRightMotor.setPower(0);
+                backLeftMotor.setPower(0);
             }
         }
     }

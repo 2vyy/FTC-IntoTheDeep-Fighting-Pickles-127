@@ -88,9 +88,9 @@ public class TeleOp_Test extends LinearOpMode {
             extendArmMotor.setTargetPosition(-240);
         }
 
-        if(gamepad1.x) {
+        if(gamepad1.dpad_down) {
             roller.setPower(1);
-        } else if (gamepad1.y) {
+        } else if (gamepad1.dpad_up) {
             roller.setPower(-1);
         } else {
             roller.setPower(0);
