@@ -48,54 +48,69 @@ public class TeleOp_Test extends LinearOpMode {
         frontLeftMotor = hardwareMap.get(DcMotor.class, "frontLeft");
         frontRightMotor = hardwareMap.get(DcMotor.class, "frontRight");
         backLeftMotor = hardwareMap.get(DcMotor.class, "backLeft");
-        backRightMotor = hardwareMap.get(DcMotor.class, "backRight");
+        backRightMotor = hardwareMap.get(DcMotor.class, "backRight"); //*
 
         frontRightMotor.setDirection(DcMotor.Direction.REVERSE);
 
-        extendArmMotor = hardwareMap.get(DcMotor.class, "extendArmMotor");
-        roller = hardwareMap.get(CRServo.class, "roller");
+        //extendArmMotor = hardwareMap.get(DcMotor.class, "extendArmMotor");
+        //roller = hardwareMap.get(CRServo.class, "roller");
 
-        extendArmMotor.setTargetPosition(-130);
-        extendArmMotor.setPower(0);
-        extendArmMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        extendArmMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        extendArmMotor.setDirection(DcMotorSimple.Direction.FORWARD);
+        //extendArmMotor.setTargetPosition(-130);
+        //extendArmMotor.setPower(0);
+        //extendArmMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        //extendArmMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        //extendArmMotor.setDirection(DcMotorSimple.Direction.FORWARD);
+
 
 
         //pauses until START is pressed
         waitForStart();
 
         while(opModeIsActive()) {
-            motorAction();
+            //motorAction();
 
-            telemetry.addLine("ExtendArm: "+extendArmMotor.getCurrentPosition());
-            telemetry.update();
-            armAction();
+            //telemetry.addLine("ExtendArm CurrPos: "+extendArmMotor.getCurrentPosition());
+            //telemetry.addLine("ExtendArm TargetPos: "+extendArmMotor.getTargetPosition());
 
+            //telemetry.update();
+            //armAction();
 
+            if(gamepad1.dpad_up) {
+                backRightMotor.setPower(-.25);
+            } else if(gamepad1.dpad_down) {
+                backRightMotor.setPower(.25);
+            } else {
+                backRightMotor.setPower(0);
+            }
 
         }
     }
 
-    public void armAction() {
-        if(gamepad1.a) {
-            extendArmMotor.setPower(.2);
-            extendArmMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            extendArmMotor.setTargetPosition(-265);
-        } else if (gamepad1.b) {
-            extendArmMotor.setPower(.2);
-            extendArmMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            extendArmMotor.setTargetPosition(-240);
-        }
-
-        if(gamepad1.dpad_down) {
-            roller.setPower(1);
-        } else if (gamepad1.dpad_up) {
-            roller.setPower(-1);
-        } else {
-            roller.setPower(0);
-        }
-    }
+//    public void armAction() {
+//        if(gamepad1.a) {
+//            extendArmMotor.setPower(.2);
+//            extendArmMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//            extendArmMotor.setTargetPosition(-265);
+//        } else if (gamepad1.b) {
+//            extendArmMotor.setPower(.2);
+//            extendArmMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//            extendArmMotor.setTargetPosition(-240);
+//        }
+//
+//        if(gamepad1.right_bumper) {
+//            extendArmMotor.setPower(0);
+//            extendArmMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+//        }
+//
+//        if(gamepad1.dpad_down) {
+//            roller.setPower(1);
+//        } else if (gamepad1.dpad_up) {
+//            roller.setPower(-1);
+//        } else if (gamepad1.dpad_left){
+//            roller.setPower(0);
+//        }
+//    }
 
 
 
@@ -113,11 +128,11 @@ public class TeleOp_Test extends LinearOpMode {
         double frontRightPower = (y - x - rx) / denominator;
         double backRightPower = (y + x - rx) / denominator;
 
-        if(gamepad1.back) {
-            powerModifier = 0.25;
-        } else {
-            powerModifier = 1;
-        }
+//        if(gamepad1.back) {
+//            powerModifier = 0.25;
+//        } else {
+//            powerModifier = 1;
+//        }
 
         frontLeftMotor.setPower(frontLeftPower);
         backLeftMotor.setPower(backLeftPower);
@@ -127,17 +142,17 @@ public class TeleOp_Test extends LinearOpMode {
 
 
 
-    public void rrAction() {
-        TelemetryPacket packet = new TelemetryPacket();
-        List<Action> newActions = new ArrayList<>();
-        for (Action action : runningActions) {
-            action.preview(packet.fieldOverlay());
-            if (action.run(packet)) {
-                newActions.add(action);
-            }
-        }
-        runningActions = newActions;
-
-        dash.sendTelemetryPacket(packet);
-    }
+//    public void rrAction() {
+//        TelemetryPacket packet = new TelemetryPacket();
+//        List<Action> newActions = new ArrayList<>();
+//        for (Action action : runningActions) {
+//            action.preview(packet.fieldOverlay());
+//            if (action.run(packet)) {
+//                newActions.add(action);
+//            }
+//        }
+//        runningActions = newActions;
+//
+//        dash.sendTelemetryPacket(packet);
+//    }
 }

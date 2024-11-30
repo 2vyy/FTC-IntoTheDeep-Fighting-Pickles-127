@@ -7,12 +7,11 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
 public class ControlHub {
-
-    Arm arm;
     MecanumDrive drive; //Roadrunner class, required for trajectories and stuff
+    Slide slide;
 
     public void init(HardwareMap map, Pose2d initialPose) {
+        slide = new Slide(map);
         drive = new MecanumDrive(map, initialPose);
-        arm = new Arm(map);
     }
 }

@@ -7,82 +7,47 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 @TeleOp(name="pid_tuning_teleop")
 public class test_pid_tune_arm_asdasd extends LinearOpMode {
-    private DcMotor baseArmMotor;
-    private DcMotor extendArmMotor;
-
-    private CRServo roller;
+    private DcMotor slideMotor;
+    private Servo swing;
+    private Servo claw;
 
     private double lastError = 0;
     private double integralSum = 0;
     private ElapsedTime timer = new ElapsedTime();
 
-    PIDFController extendPID;
-
-    boolean extend = true;
-
-    double a = 0.0;
+    boolean extend = false;
 
     FtcDashboard dashboard;
 
     @Override
     public void runOpMode() throws InterruptedException {
-        baseArmMotor = hardwareMap.get(DcMotor.class, "baseArmMotor");
-        extendArmMotor = hardwareMap.get(DcMotor.class, "extendArmMotor");
-        roller = hardwareMap.get(CRServo.class, "roller");
+        slideMotor = hardwareMap.get(DcMotor.class, "slideMotor");
+        swing = hardwareMap.get(Servo.class, "swing");
+        claw = hardwareMap.get(Servo.class, "claw");
 
-        baseArmMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        extendArmMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        slideMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        baseArmMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        extendArmMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-        baseArmMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        extendArmMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-        baseArmMotor.setDirection(DcMotorSimple.Direction.REVERSE);
-        extendArmMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        slideMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         //ftc dashboard
         dashboard = FtcDashboard.getInstance();
         telemetry = dashboard.getTelemetry();
 
-
-        extendPID = new PIDFController(
-                RobotConstants.EXTEND_ARM_kP,
-                RobotConstants.EXTEND_ARM_kI,
-                RobotConstants.EXTEND_ARM_kD,
-                RobotConstants.EXTEND_ARM_kF
-        );
-
-
-
         waitForStart();
-
         while(opModeIsActive()) {
-
-//            if(gamepad1.a) {
-//                roller.setPower(1);
-//            } else if (gamepad1.b) {
-//                roller.setPower(-1);
-//            } else {
-////                roller.setPower(0);
-//            }
-
-
-
             if(gamepad1.a) {
                 extend = true;
             } else if (gamepad1.b) {
                 extend = false;
             }
 
-            telemetry.addData("extendCurrentPosition", extendArmMotor.getCurrentPosition());
-            telemetry.addData("baseCurrentPosition", baseArmMotor.getCurrentPosition());
-            telemetry.addData("asd", 0.0);
+            telemetry.addData("slideCurrentPosition", slideMotor.getCurrentPosition());
+//            telemetry.addData("asd", 0.0);
             telemetry.update();
 
             armAction();
@@ -91,47 +56,16 @@ public class test_pid_tune_arm_asdasd extends LinearOpMode {
 
     public void armAction() {
         if(extend) {
-//                    extendArmMotor.setPower(calculate(RobotConstants.EXTEND_ARM_EXTEND_POS,
-//                    extendArmMotor.getCurrentPosition(), RobotConstants.EXTEND_ARM_kP,
-//                    RobotConstants.EXTEND_ARM_kI, RobotConstants.EXTEND_ARM_kD,
-//                    RobotConstants.EXTEND_ARM_kF));
-
-            extendArmMotor.setPower(
-                    extendPID.calculate(
-                            RobotConstants.EXTEND_ARM_EXTEND_POS,
-                            extendArmMotor.getCurrentPosition()
-                    )
-            );
-
-            baseArmMotor.setPower(calculate(RobotConstants.BASE_ARM_EXTEND_POS,
-                    baseArmMotor.getCurrentPosition(), RobotConstants.BASE_ARM_kP,
-                    RobotConstants.BASE_ARM_kI, RobotConstants.BASE_ARM_kD,
-                    RobotConstants.BASE_ARM_kF));
-
-            telemetry.addData("extendTargetPosition", RobotConstants.EXTEND_ARM_EXTEND_POS);
-            telemetry.addData("baseTargetPosition", RobotConstants.BASE_ARM_EXTEND_POS);
+            slideMotor.setPower(calculate(RobotConstants.SLIDE_REST_POS,
+                    slideMotor.getCurrentPosition(), RobotConstants.SLIDE_kP,
+                    RobotConstants.SLIDE_kI, RobotConstants.SLIDE_kD,
+                    RobotConstants.SLIDE_kF));
 
         } else {
-
-//            extendArmMotor.setPower(calculate(RobotConstants.EXTEND_ARM_REST_POS,
-//                    extendArmMotor.getCurrentPosition(), RobotConstants.EXTEND_ARM_kP,
-//                    RobotConstants.EXTEND_ARM_kI, RobotConstants.EXTEND_ARM_kD,
-//                    RobotConstants.EXTEND_ARM_kF));
-
-            extendArmMotor.setPower(
-                    extendPID.calculate(
-                            RobotConstants.EXTEND_ARM_REST_POS,
-                            extendArmMotor.getCurrentPosition()
-                    )
-            );
-
-            baseArmMotor.setPower(calculate(RobotConstants.BASE_ARM_REST_POS,
-                    baseArmMotor.getCurrentPosition(), RobotConstants.BASE_ARM_kP,
-                    RobotConstants.BASE_ARM_kI, RobotConstants.BASE_ARM_kD,
-                    RobotConstants.BASE_ARM_kF));
-
-            telemetry.addData("extendTargetPosition", RobotConstants.EXTEND_ARM_REST_POS);
-            telemetry.addData("baseTargetPosition", RobotConstants.BASE_ARM_REST_POS);
+            slideMotor.setPower(calculate(RobotConstants.SLIDE_HIGH_BASKET_POS,
+                    slideMotor.getCurrentPosition(), RobotConstants.SLIDE_kP,
+                    RobotConstants.SLIDE_kI, RobotConstants.SLIDE_kD,
+                    RobotConstants.SLIDE_kF));
 
         }
     }
