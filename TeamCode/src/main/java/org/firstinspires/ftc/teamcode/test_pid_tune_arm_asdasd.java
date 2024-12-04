@@ -12,13 +12,13 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 @TeleOp(name="pid_tuning_teleop")
 public class test_pid_tune_arm_asdasd extends LinearOpMode {
-    private DcMotor slideMotor;
-    private Servo swing;
-    private Servo claw;
+    DcMotor slideMotor;
+    Servo swing;
 
     private double lastError = 0;
     private double integralSum = 0;
     private ElapsedTime timer = new ElapsedTime();
+    int target = 0;
 
     boolean extend = false;
 
@@ -26,13 +26,14 @@ public class test_pid_tune_arm_asdasd extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        slideMotor = hardwareMap.get(DcMotor.class, "slideMotor");
         swing = hardwareMap.get(Servo.class, "swing");
-        claw = hardwareMap.get(Servo.class, "claw");
+        slideMotor = hardwareMap.get(DcMotor.class, "slideMotor");
+        swing.setDirection(Servo.Direction.FORWARD);
 
-        slideMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
+        slideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         slideMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        slideMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        slideMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
         //ftc dashboard
         dashboard = FtcDashboard.getInstance();
@@ -42,12 +43,15 @@ public class test_pid_tune_arm_asdasd extends LinearOpMode {
         while(opModeIsActive()) {
             if(gamepad1.a) {
                 extend = true;
+                target = 2000;
             } else if (gamepad1.b) {
                 extend = false;
+                target = 0;
             }
 
             telemetry.addData("slideCurrentPosition", slideMotor.getCurrentPosition());
-//            telemetry.addData("asd", 0.0);
+            telemetry.addData("slideTarget", target);
+            telemetry.addData("asd", 0.0);
             telemetry.update();
 
             armAction();
