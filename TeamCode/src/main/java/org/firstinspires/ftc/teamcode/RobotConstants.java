@@ -6,12 +6,15 @@ import com.acmerobotics.dashboard.config.Config;
 // See https://acmerobotics.github.io/ftc-dashboard/features.html
 @Config
 public class RobotConstants {
+
     public static int PID_ERROR_TOLERANCE = 10;
     // slide pid
     public static double SLIDE_kP = 0.004;//TODO: tune PID coefficients
+
     public static double SLIDE_kI = 0;
     public static double SLIDE_kD = 0;
     public static double SLIDE_kF = 0.02;
+
 
     public static int SLIDE_HIGH_BASKET_POS = 2100;
     public static int SLIDE_HIGH_BAR_POS = 2650;
@@ -27,3 +30,4 @@ public class RobotConstants {
     public static double CLAW_OPEN = 0.1;
     public static double CLAW_CLOSE = 0;
 }
+

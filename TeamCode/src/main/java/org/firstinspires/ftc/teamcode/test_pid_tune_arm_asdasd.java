@@ -1,12 +1,14 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.acmerobotics.dashboard.FtcDashboard;
+
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.robot.Robot;
+
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 @TeleOp(name="pid_tuning_teleop")
@@ -29,6 +31,7 @@ public class test_pid_tune_arm_asdasd extends LinearOpMode {
         slideMotor = hardwareMap.get(DcMotor.class, "slideMotor");
         swing.setDirection(Servo.Direction.FORWARD);
 
+
         slideMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         slideMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         slideMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -41,6 +44,7 @@ public class test_pid_tune_arm_asdasd extends LinearOpMode {
         );
 
 
+
         //ftc dashboard
         dashboard = FtcDashboard.getInstance();
         telemetry = dashboard.getTelemetry();
@@ -49,6 +53,7 @@ public class test_pid_tune_arm_asdasd extends LinearOpMode {
         while(opModeIsActive()) {
             if(gamepad1.a) {
                 extend = true;
+
                 target = RobotConstants.SLIDE_HIGH_BAR_POS;
 
             } else if (gamepad1.b) {
@@ -59,6 +64,7 @@ public class test_pid_tune_arm_asdasd extends LinearOpMode {
             telemetry.addData("slideTarget", 2000   );
             telemetry.addData("asd", 0.0);
             telemetry.addLine(slideMotor.getCurrentPosition()+"");
+
             telemetry.update();
 
             armAction();
