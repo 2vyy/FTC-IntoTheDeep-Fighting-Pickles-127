@@ -1,13 +1,14 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.acmerobotics.dashboard.FtcDashboard;
-import com.acmerobotics.roadrunner.Pose2d;
+
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.robot.Robot;
+
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 @TeleOp(name="pid_tuning_teleop")
@@ -30,10 +31,19 @@ public class test_pid_tune_arm_asdasd extends LinearOpMode {
         slideMotor = hardwareMap.get(DcMotor.class, "slideMotor");
         swing.setDirection(Servo.Direction.FORWARD);
 
-        slideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        slideMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         slideMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         slideMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        slideMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        PIDFController slidePID = new PIDFController(
+                RobotConstants.SLIDE_kP,
+                RobotConstants.SLIDE_kI,
+                RobotConstants.SLIDE_kD,
+                RobotConstants.SLIDE_kF
+        );
+
+
 
         //ftc dashboard
         dashboard = FtcDashboard.getInstance();
@@ -43,15 +53,18 @@ public class test_pid_tune_arm_asdasd extends LinearOpMode {
         while(opModeIsActive()) {
             if(gamepad1.a) {
                 extend = true;
-                target = 2000;
+
+                target = RobotConstants.SLIDE_HIGH_BAR_POS;
+
             } else if (gamepad1.b) {
                 extend = false;
-                target = 0;
-            }
+                target = RobotConstants.SLIDE_REST_POS;}
 
             telemetry.addData("slideCurrentPosition", slideMotor.getCurrentPosition());
-            telemetry.addData("slideTarget", target);
+            telemetry.addData("slideTarget", 2000   );
             telemetry.addData("asd", 0.0);
+            telemetry.addLine(slideMotor.getCurrentPosition()+"");
+
             telemetry.update();
 
             armAction();

@@ -4,6 +4,9 @@ import androidx.annotation.NonNull;
 
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
+
+import com.acmerobotics.roadrunner.InstantAction;
+
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -156,8 +159,12 @@ public class Slide {
 //        }
 //    }
 
-    public void swingDown() {swing.setPosition(RobotConstants.SWING_DOWN);}
+
+    //public void swingDown() {swing.setPosition(RobotConstants.SWING_DOWN);}
     public void swingUp() {swing.setPosition(RobotConstants.SWING_UP);}
+
+
+
 
     public void openClaw() {claw.setPosition(RobotConstants.CLAW_OPEN);}
     public void closeClaw() {claw.setPosition(RobotConstants.CLAW_CLOSE);}
