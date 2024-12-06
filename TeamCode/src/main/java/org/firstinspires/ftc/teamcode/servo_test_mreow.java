@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
-@TeleOp(name="servo_test_mreow")
+@TeleOp(name="real_teleop")
 public class servo_test_mreow extends LinearOpMode {
     public DcMotor frontLeftMotor;
     public DcMotor frontRightMotor;
@@ -30,7 +30,7 @@ public class servo_test_mreow extends LinearOpMode {
         DcMotor slideMotor = hardwareMap.get(DcMotor.class, "slideMotor");
         swing.setDirection(Servo.Direction.FORWARD);
 
-        slideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        //slideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         slideMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         slideMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         slideMotor.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -43,10 +43,10 @@ public class servo_test_mreow extends LinearOpMode {
 
             if(gamepad1.b) {
                 telemetry.addLine("opening claw");
-                claw.setPosition(RobotConstants.CLAW_OPEN);
+                claw.setPosition(RobotConstants.CLAW_CLOSE);
             } else if (gamepad1.a) {
                 telemetry.addLine("closing claw");
-                claw.setPosition(RobotConstants.CLAW_CLOSE);
+                claw.setPosition(RobotConstants.CLAW_OPEN);
             }
 
             if(gamepad1.y) {

@@ -58,14 +58,15 @@ public class AutoTest extends LinearOpMode {
                         slidePID,
                         RobotConstants.SLIDE_HIGH_BAR_POS))
                 .stopAndAdd(new ServoAction(swing, RobotConstants.SWING_SPECIMEN))
-                .strafeTo(new Vector2d(-12, -34))
+                .strafeTo(new Vector2d(-12, -33))
                 .stopAndAdd(new MotorAction(
                         slideMotor,
                         slidePID,
                         RobotConstants.SLIDE_HIGH_BAR_POS_SECOND))
                 .strafeTo(new Vector2d(-12, -44))
                 .waitSeconds(2.5)
-                .stopAndAdd(new ServoAction(claw, RobotConstants.CLAW_OPEN));
+                .stopAndAdd(new ServoAction(claw, RobotConstants.CLAW_OPEN))
+                .waitSeconds(1);
 
 
 //                .strafeTo(new Vector2d(-12, -56))
@@ -129,6 +130,19 @@ public class AutoTest extends LinearOpMode {
             if(Math.abs(slideMotor.getCurrentPosition()-this.position)<20) {
                 return false;
             }
+
+//            if(Math.abs(currPose+5-this.position)<20 ||
+//               Math.abs(currPose-5-this.position)<20) {
+//                return false;
+//            }
+//
+//            if(Math.abs(1.0 - (double) currPose / (double) this.position) > 0.03) {
+//                return false;
+//            }
+
+
+
+
             //if not, return true. Roadrunner will then repeat the action
             return true;
         }

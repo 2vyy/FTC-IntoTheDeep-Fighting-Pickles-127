@@ -14,9 +14,9 @@ public class RobotConstants {
     public static double SLIDE_kF = 0.02;
 
     public static int SLIDE_HIGH_BASKET_POS = 2100;
-    public static int SLIDE_HIGH_BAR_POS = 2650;
-    public static int SLIDE_HIGH_BAR_POS_SECOND = 2550;
-    public static int SLIDE_REST_POS = 300;
+    public static int SLIDE_HIGH_BAR_POS = 2525;
+    public static int SLIDE_HIGH_BAR_POS_SECOND = 2500;
+    public static int SLIDE_REST_POS = 260;
 
     // swing servo
     public static double SWING_UP = 0.3;//TODO: tune servo positions
