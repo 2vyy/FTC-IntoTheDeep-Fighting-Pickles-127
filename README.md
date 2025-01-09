@@ -2,6 +2,7 @@
 
 ## Code Layout
 ![image](https://github.com/user-attachments/assets/aaac81c7-af2c-41e6-8011-ee91b96e9e67)
+(this is really outdated but dw about it its fine)
 
 ## Links
 * [Conceptual Introduction of PID Control](https://youtu.be/4Y7zG48uHRo?si=2XhRVeDYf7zzIsRo)
