@@ -64,18 +64,14 @@ public class MecanumDrive {
 
         // drive model parameters
 
-        //inches = 74.0; ticks = 3061.75x
-        public double inPerTick = 74.0 / 3061.75;
-
-        //inches = 72; ticks = 2744.75
-        public double lateralInPerTick = 73.0 / 2744.75;
-        public double trackWidthTicks = 1205.5280723358235;
-
+        public double inPerTick = 1; // If you're using OTOS/Pinpoint leave this at 1 (all values will be in inches, 1 tick = 1 inch)
+        public double lateralInPerTick = 0.7634125904935564; //0.7903706490650153; // Tune this with LateralRampLogger (even if you use OTOS/Pinpoint)
+        public double trackWidthTicks = 14.44558009434572; //14.372749082015055;
 
         // feedforward parameters (in tick units)
-        public double kS = 0.909602207192667;
-        public double kV = 0.00435620678814649;
-        public double kA = 0.0007;
+        public double kS = 0.9404704247131233; //0.8336319542972865
+        public double kV = 0.17679832824039685; //0.18051708855462414;
+        public double kA = 0.035; //0.005;
 
         // path profile parameters (in inches)
         public double maxWheelVel = 50;
@@ -87,9 +83,11 @@ public class MecanumDrive {
         public double maxAngAccel = Math.PI;
 
         // path controller gains
-        public double axialGain = 6.0; //forward/backward
-        public double lateralGain = 2.0; //left/right
-        public double headingGain = 8.0; // shared with turn
+
+        public double axialGain = 8; //4;
+        public double lateralGain = 5; //5;
+        public double headingGain = 2; //2; // shared with turn
+
 
         public double axialVelGain = 0.0;
         public double lateralVelGain = 0.0;
@@ -142,10 +140,13 @@ public class MecanumDrive {
             rightFront = new OverflowEncoder(new RawEncoder(MecanumDrive.this.rightFront));
 
             imu = lazyImu.get();
-
+            // ACTUALLY LOOK AT THIS later
             // TODO: reverse encoders if needed
-            leftBack.setDirection(DcMotorSimple.Direction.REVERSE);
-            leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
+
+            leftFront.setDirection(DcMotor.Direction.REVERSE);
+            leftBack.setDirection(DcMotor.Direction.REVERSE);
+//            leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
+
         }
 
         @Override
@@ -221,7 +222,8 @@ public class MecanumDrive {
             module.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
         }
 
-
+        // TODO: make sure your config has motors with these names (or change them)
+        //   see https://ftc-docs.firstinspires.org/en/latest/hardware_and_software_configuration/configuring/index.html
 
         leftFront = hardwareMap.get(DcMotorEx.class, "frontLeft");
         leftBack = hardwareMap.get(DcMotorEx.class, "backLeft");
@@ -233,8 +235,9 @@ public class MecanumDrive {
         leftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-
+      
+        // TODO: reverse motor directions if needed
+//           leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
         leftBack.setDirection(DcMotorSimple.Direction.REVERSE);
         leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
 

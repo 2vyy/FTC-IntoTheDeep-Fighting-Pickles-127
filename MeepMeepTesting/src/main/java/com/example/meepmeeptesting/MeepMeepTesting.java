@@ -1,5 +1,6 @@
 package com.example.meepmeeptesting;
 
+public class MeepMeepTesting {
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.noahbres.meepmeep.MeepMeep;
