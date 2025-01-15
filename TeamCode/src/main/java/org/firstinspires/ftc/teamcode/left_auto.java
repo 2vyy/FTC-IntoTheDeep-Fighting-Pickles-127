@@ -4,7 +4,9 @@ import androidx.annotation.NonNull;
 
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
+import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.Pose2d;
+import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
@@ -13,6 +15,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 @Autonomous(name="left auto")
 public class left_auto extends LinearOpMode {
@@ -36,23 +39,76 @@ public class left_auto extends LinearOpMode {
                 RobotConstants.SLIDE_kF
         );
 
-        Pose2d initialPose = new Pose2d(0, 0, Math.toRadians(0));
+        Pose2d initialPose = new Pose2d(-32, -61, Math.toRadians(180));
         SparkFunOTOSDrive drive = new SparkFunOTOSDrive(hardwareMap, initialPose);
 
-        TrajectoryActionBuilder startToCenter = drive.actionBuilder(initialPose)
+        TrajectoryActionBuilder dropOffSample = drive.actionBuilder(initialPose)
                 .stopAndAdd(new ServoAction(claw, RobotConstants.CLAW_CLOSE))
-                .waitSeconds(.25)
-                .stopAndAdd(new ServoAction(swing, RobotConstants.SWING_UP));
+                .waitSeconds(0.25)
 
-//        TrajectoryActionBuilder startToCenter = drive.actionBuilder(initialPose)
-//                .splineToConstantHeading(new Vector2d(24, 24), Math.PI / 4);
+                .strafeToLinearHeading(new Vector2d(-47, -47), Math.toRadians(235))
+                .waitSeconds(0.25)
+                .stopAndAdd(new ServoAction(swing, RobotConstants.SWING_UP))
+                .waitSeconds(1.25)
+                .stopAndAdd(new MotorAction(slideMotor, slidePID, RobotConstants.SLIDE_HIGH_BASKET_POS))
+                .waitSeconds(0.5)
+                .strafeToLinearHeading(new Vector2d(-51, -51), Math.toRadians(235))
+                .waitSeconds(0.5)
+                .stopAndAdd(new ServoAction(claw, RobotConstants.CLAW_OPEN))
+                .waitSeconds(0.25)
+                .strafeToLinearHeading(new Vector2d(-47, -47), Math.toRadians(235))
+                .waitSeconds(0.25)
+                .stopAndAdd(new MotorAction(slideMotor, slidePID, RobotConstants.SLIDE_REST_POS))
+                .waitSeconds(0.5)
 
-        Action a_startToCenter = startToCenter.build();
+                .strafeToLinearHeading(new Vector2d(-51.5, -39), Math.toRadians(90))
+                .waitSeconds(0.25)
+                .stopAndAdd(new ServoAction(swing, RobotConstants.SWING_AUTO_SAMPLE))
+                .waitSeconds(1)
+                .stopAndAdd(new ServoAction(claw, RobotConstants.CLAW_CLOSE))
+                .waitSeconds(0.25)
+                .stopAndAdd(new ServoAction(swing, RobotConstants.SWING_UP))
+                .waitSeconds(0.5)
+                .strafeToLinearHeading(new Vector2d(-47, -47), Math.toRadians(235))
+                .waitSeconds(0.5)
+                .stopAndAdd(new MotorAction(slideMotor, slidePID, RobotConstants.SLIDE_HIGH_BASKET_POS))
+                .waitSeconds(0.5)
+                .strafeToLinearHeading(new Vector2d(-51, -51), Math.toRadians(235))
+                .waitSeconds(0.5)
+                .stopAndAdd(new ServoAction(claw, RobotConstants.CLAW_OPEN))
+                .waitSeconds(0.25)
+                .strafeToLinearHeading(new Vector2d(-47, -47), Math.toRadians(235))
+                .waitSeconds(0.25)
+                .stopAndAdd(new MotorAction(slideMotor, slidePID, RobotConstants.SLIDE_REST_POS))
+                .waitSeconds(0.5)
+
+                .strafeToLinearHeading(new Vector2d(-58.5, -39), Math.toRadians(90))
+                .waitSeconds(0.25)
+                .stopAndAdd(new ServoAction(swing, RobotConstants.SWING_AUTO_SAMPLE))
+                .waitSeconds(1);
+//                .stopAndAdd(new ServoAction(claw, RobotConstants.CLAW_CLOSE))
+//                .waitSeconds(0.25)
+//                .stopAndAdd(new ServoAction(swing, RobotConstants.SWING_UP))
+//                .waitSeconds(0.5)
+//                .strafeToLinearHeading(new Vector2d(-47, -47), Math.toRadians(235))
+//                .waitSeconds(0.5)
+//                .stopAndAdd(new MotorAction(slideMotor, slidePID, RobotConstants.SLIDE_HIGH_BASKET_POS))
+//                .waitSeconds(0.5)
+//                .strafeToLinearHeading(new Vector2d(-51, -51), Math.toRadians(235))
+//                .waitSeconds(0.5)
+//                .stopAndAdd(new ServoAction(claw, RobotConstants.CLAW_OPEN))
+//                .waitSeconds(0.25)
+//                .strafeToLinearHeading(new Vector2d(-47, -47), Math.toRadians(235))
+//                .waitSeconds(0.25)
+//                .stopAndAdd(new MotorAction(slideMotor, slidePID, RobotConstants.SLIDE_REST_POS))
+//                .waitSeconds(0.5);
+
+        Action a_dropOffSample = dropOffSample.build();
 
         waitForStart();
 
         Actions.runBlocking(
-                a_startToCenter
+                a_dropOffSample
         );
     }
 
@@ -61,12 +117,14 @@ public class left_auto extends LinearOpMode {
         PIDFController slidePIDF;
         double currPose;
         double position;
+        ElapsedTime time;
 
         public MotorAction(DcMotor m, PIDFController pidf, int p) {
             this.slideMotor = m;
             this.currPose = m.getCurrentPosition();
             this.slidePIDF = pidf;
             this.position = p;
+            time.reset();
         }
 
         @Override
@@ -83,7 +141,8 @@ public class left_auto extends LinearOpMode {
             );
 
             //If the last errors of both the PIDs are under PID_ERROR_TOLERANCE ticks, the motors are close enough so return false and end the action.
-            if(Math.abs(this.currPose-this.position)<RobotConstants.PID_ERROR_TOLERANCE) {
+            if(Math.abs(currPose-this.position)<RobotConstants.PID_ERROR_TOLERANCE || time.seconds()>3.5) {
+                slideMotor.setPower(RobotConstants.SLIDE_kF);
                 return false;
             }
             //if not, return true. Roadrunner will then repeat the action

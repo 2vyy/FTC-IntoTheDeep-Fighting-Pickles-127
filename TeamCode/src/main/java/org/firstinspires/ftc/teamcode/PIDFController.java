@@ -38,7 +38,6 @@ public class PIDFController {
         integralSum = integralSum + (error * timer.seconds());
 
         double out = (Kp * error) + (Ki * integralSum) + (Kd * derivative) + Kf;
-
         lastError = error;
 
         // reset the timer for next time
