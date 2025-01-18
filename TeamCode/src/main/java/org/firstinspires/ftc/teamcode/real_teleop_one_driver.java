@@ -78,41 +78,49 @@ public class real_teleop_one_driver extends LinearOpMode {
                 swing.setPosition(RobotConstants.SWING_SPECIMEN);
             }
 
-            if(gamepad1.dpad_up) {
-                slideMotor.setPower(.4);
-            } else if(gamepad1.dpad_down) {
-                slideMotor.setPower(-.4);
-            } else {
-                slideMotor.setPower(RobotConstants.SLIDE_kF);
-            }
-
+            telemetry.addLine(slideMotor.getCurrentPosition()+"");
             telemetry.update();
         }
     }
 
     public void slideAction() {
-        if (gamepad1.dpad_left) {
-            is_PIDF_Active = true;
-            targetPosition = RobotConstants.SLIDE_HIGH_BASKET_POS;
-        } else if (gamepad1.dpad_right) {
-            is_PIDF_Active = true;
-            targetPosition = RobotConstants.SLIDE_HIGH_BAR_POS;
-        } else if (gamepad1.left_bumper) {
-            is_PIDF_Active = true;
-            targetPosition = RobotConstants.SLIDE_REST_POS;
+        if(gamepad1.dpad_up) {
+            is_PIDF_Active = false;
+            slideMotor.setPower(.4);
+        } else if(gamepad1.dpad_down) {
+            is_PIDF_Active = false;
+            slideMotor.setPower(-.4);
+        } else {
+            slideMotor.setPower(RobotConstants.SLIDE_kF);
         }
 
-        if (Math.abs(slideMotor.getCurrentPosition()-targetPosition) < RobotConstants.PID_ERROR_TOLERANCE) {
-            slideMotor.setPower(RobotConstants.SLIDE_kF);
-            is_PIDF_Active = false;
-        } else {
-            slideMotor.setPower(
-                    slidePIDF.calculate(
-                            targetPosition,
-                            slideMotor.getCurrentPosition()
-                    )
-            );
-        }
+//        } else if (gamepad1.dpad_left) {
+//            is_PIDF_Active = true;
+//            targetPosition = RobotConstants.SLIDE_HIGH_BASKET_POS;
+//        }
+////        } else if (gamepad1.dpad_right) {
+////            is_PIDF_Active = true;
+////            targetPosition = RobotConstants.SLIDE_HIGH_BAR_POS;
+////        } else if (gamepad1.left_bumper) {
+////            is_PIDF_Active = true;
+////            targetPosition = RobotConstants.SLIDE_REST_POS;
+////        } else if (!is_PIDF_Active) {
+////            slideMotor.setPower(RobotConstants.SLIDE_kF);
+////        }
+//
+//        if(is_PIDF_Active) {
+//            if (Math.abs(slideMotor.getCurrentPosition() - targetPosition) < RobotConstants.PID_ERROR_TOLERANCE) {
+//                slideMotor.setPower(RobotConstants.SLIDE_kF);
+//                is_PIDF_Active = false;
+//            } else {
+//                slideMotor.setPower(
+//                        slidePIDF.calculate(
+//                                targetPosition,
+//                                slideMotor.getCurrentPosition()
+//                        )
+//                );
+//            }
+//        }
     }
 
     public void motorAction() {
