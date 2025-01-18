@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.robot.Robot;
 
 @TeleOp(name="real_teleop_one_driver")
 public class real_teleop_one_driver extends LinearOpMode {
@@ -13,7 +14,13 @@ public class real_teleop_one_driver extends LinearOpMode {
     public DcMotor backLeftMotor;
     public DcMotor backRightMotor;
 
+    public DcMotor slideMotor;
+
+    public PIDFController slidePIDF;
+    public boolean is_PIDF_Active = false;
+
     public double powerModifier = 1.0;
+    public int targetPosition = RobotConstants.SLIDE_REST_POS;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -29,19 +36,25 @@ public class real_teleop_one_driver extends LinearOpMode {
 
         Servo swing = hardwareMap.get(Servo.class, "swing");
         Servo claw = hardwareMap.get(Servo.class, "claw");
-        DcMotor slideMotor = hardwareMap.get(DcMotor.class, "slideMotor");
+        slideMotor = hardwareMap.get(DcMotor.class, "slideMotor");
         swing.setDirection(Servo.Direction.FORWARD);
 
-        //slideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         slideMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         slideMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         slideMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        slidePIDF = new PIDFController(
+                RobotConstants.SLIDE_kP,
+                RobotConstants.SLIDE_kI,
+                RobotConstants.SLIDE_kD,
+                RobotConstants.SLIDE_kF
+        );
 
         waitForStart();
 
         while(opModeIsActive()) {
             motorAction();
-
+            slideAction();
 
             if(gamepad1.b) {
                 telemetry.addLine("opening claw");
@@ -69,15 +82,37 @@ public class real_teleop_one_driver extends LinearOpMode {
                 slideMotor.setPower(.4);
             } else if(gamepad1.dpad_down) {
                 slideMotor.setPower(-.4);
-            } else if (gamepad1.dpad_left) {
-                slideMotor.setPower(-1);
             } else {
                 slideMotor.setPower(RobotConstants.SLIDE_kF);
             }
 
             telemetry.update();
         }
+    }
 
+    public void slideAction() {
+        if (gamepad1.dpad_left) {
+            is_PIDF_Active = true;
+            targetPosition = RobotConstants.SLIDE_HIGH_BASKET_POS;
+        } else if (gamepad1.dpad_right) {
+            is_PIDF_Active = true;
+            targetPosition = RobotConstants.SLIDE_HIGH_BAR_POS;
+        } else if (gamepad1.left_bumper) {
+            is_PIDF_Active = true;
+            targetPosition = RobotConstants.SLIDE_REST_POS;
+        }
+
+        if (Math.abs(slideMotor.getCurrentPosition()-targetPosition) < RobotConstants.PID_ERROR_TOLERANCE) {
+            slideMotor.setPower(RobotConstants.SLIDE_kF);
+            is_PIDF_Active = false;
+        } else {
+            slideMotor.setPower(
+                    slidePIDF.calculate(
+                            targetPosition,
+                            slideMotor.getCurrentPosition()
+                    )
+            );
+        }
     }
 
     public void motorAction() {

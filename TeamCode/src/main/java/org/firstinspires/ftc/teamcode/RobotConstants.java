@@ -14,7 +14,7 @@ public class RobotConstants {
     public static double SLIDE_kF = 0.05;
 
     public static int SLIDE_HIGH_BASKET_POS = 3500;
-//    public static int SLIDE_HIGH_BAR_POS = 2525;
+    public static int SLIDE_HIGH_BAR_POS = 2525;
 //    public static int SLIDE_HIGH_BAR_POS_SECOND = 2470;
     public static int SLIDE_REST_POS = 35;
 
