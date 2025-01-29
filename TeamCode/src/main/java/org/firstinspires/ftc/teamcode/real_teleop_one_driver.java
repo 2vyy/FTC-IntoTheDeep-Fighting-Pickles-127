@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.robot.Robot;
 
-@TeleOp(name="real_teleop_one_driver")
+@TeleOp(name="A_real_teleop_one_driver")
 public class real_teleop_one_driver extends LinearOpMode {
     public DcMotor frontLeftMotor;
     public DcMotor frontRightMotor;
@@ -52,6 +52,7 @@ public class real_teleop_one_driver extends LinearOpMode {
 
         waitForStart();
 
+
         while(opModeIsActive()) {
             motorAction();
             slideAction();
@@ -86,10 +87,10 @@ public class real_teleop_one_driver extends LinearOpMode {
     public void slideAction() {
         if(gamepad1.dpad_up) {
             is_PIDF_Active = false;
-            slideMotor.setPower(.4);
+            slideMotor.setPower(RobotConstants.SLIDE_SPEED);
         } else if(gamepad1.dpad_down) {
             is_PIDF_Active = false;
-            slideMotor.setPower(-.4);
+            slideMotor.setPower(-1 * RobotConstants.SLIDE_SPEED);
         } else {
             slideMotor.setPower(RobotConstants.SLIDE_kF);
         }

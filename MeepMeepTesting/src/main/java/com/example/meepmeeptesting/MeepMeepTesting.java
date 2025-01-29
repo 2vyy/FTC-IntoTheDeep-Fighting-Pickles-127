@@ -1,6 +1,7 @@
 package com.example.meepmeeptesting;
 
 import com.acmerobotics.roadrunner.Pose2d;
+import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.noahbres.meepmeep.MeepMeep;
 import com.noahbres.meepmeep.roadrunner.DefaultBotBuilder;
@@ -10,32 +11,51 @@ public class MeepMeepTesting {
     public static void main(String[] args) {
         MeepMeep meepMeep = new MeepMeep(600);
 
+        Pose2d initialPose = new Pose2d(5, -61, Math.toRadians(90));
+        Pose2d centerBarPose = new Pose2d(5, -37, Math.toRadians(90));
+        Pose2d centerBarSecondPose = new Pose2d(30, -34, Math.toRadians(90));
+        Vector2d innerSplinePose = new Vector2d(35, -20);
+        Vector2d innerSplineSecondPose = new Vector2d(45.5, -15);
+        Vector2d centerSplinePose = new Vector2d(56, -20);
+        Vector2d outerSplinePose = new Vector2d(62, -20);
+
+
+        Pose2d innerSamplePose = new Pose2d(45.5, -12, Math.toRadians(90));
+        Pose2d centerSamplePose = new Pose2d(56, -12, Math.toRadians(90));
+
+        Pose2d innerSamplePushPose = new Pose2d(45.5, -55, Math.toRadians(90));
+        Pose2d centerSamplePushPose = new Pose2d(56, -55, Math.toRadians(90));
+        Pose2d outerSamplePushPose = new Pose2d(62, -55, Math.toRadians(90));
+
+        Pose2d waitPose = new Pose2d(55, -40, Math.toRadians(90));
+        Pose2d parkPose = new Pose2d(55, -58, Math.toRadians(90));
+
         RoadRunnerBotEntity myBot = new DefaultBotBuilder(meepMeep)
                 // Set bot constraints: maxVel, maxAccel, maxAngVel, maxAngAccel, track width
-                .setConstraints(60, 60, Math.toRadians(180), Math.toRadians(180), 14)
+                .setConstraints(60, 60, Math.toRadians(180), Math.toRadians(180), 15)
                 .build();
 
-        myBot.runAction(myBot.getDrive().actionBuilder(new Pose2d(-32, -61, Math.toRadians(180)))
-                .strafeToLinearHeading(new Vector2d(-55, -55), Math.toRadians(225)) //move to basket
-                .waitSeconds(1) //drop off 1st sample
 
-                .strafeToLinearHeading(new Vector2d(-48, -40), Math.toRadians(90)) //move to 2nd sample
-                .waitSeconds(0.5)
-//                .strafeToLinearHeading(new Vector2d(-55, -55), Math.toRadians(225)) //move to basket
-//                .waitSeconds(1) //drop off 2nd sample
-//
-//                .strafeToLinearHeading(new Vector2d(-48-10, -40), Math.toRadians(90)) //move to 3rd sample
-//                .waitSeconds(0.5)
-//                .strafeToLinearHeading(new Vector2d(-55, -55), Math.toRadians(225)) //move to basket
-//                .waitSeconds(1) //drop off 3rd sample
-//
-//                .strafeToLinearHeading(new Vector2d(-48-6, -26), Math.toRadians(180)) //move to 4th sample
-//                .waitSeconds(0.5)
-//                .strafeToLinearHeading(new Vector2d(-55, -55), Math.toRadians(225)) //move to basket
-//                .waitSeconds(1) //drop off 4th sample
-//
-//                .strafeToLinearHeading(new Vector2d(-36, -10), Math.toRadians(0)) //move to center
-//                .strafeToLinearHeading(new Vector2d(-24, -10), Math.toRadians(0)) //get closer
+        myBot.runAction(myBot.getDrive().actionBuilder(initialPose)
+                .strafeToLinearHeading(centerBarPose.position, centerBarPose.heading)
+                .strafeToLinearHeading(centerBarSecondPose.position, centerBarSecondPose.heading)
+
+                .splineToConstantHeading(innerSplinePose, Math.toRadians(90))
+                .splineToConstantHeading(innerSplineSecondPose, Math.toRadians(0))
+
+                .strafeToLinearHeading(innerSamplePushPose.position, innerSamplePushPose.heading)
+                .strafeToLinearHeading(innerSamplePose.position, innerSamplePose.heading)
+                .splineToConstantHeading(centerSplinePose, Math.toRadians(270))
+
+                .strafeToLinearHeading(centerSamplePushPose.position, centerSamplePushPose.heading)
+                .strafeToLinearHeading(centerSamplePose.position, centerSamplePose.heading)
+                .splineToConstantHeading(outerSplinePose, Math.toRadians(270))
+
+                .strafeToLinearHeading(outerSamplePushPose.position, outerSamplePushPose.heading)
+
+                .strafeToLinearHeading(waitPose.position, waitPose.heading)
+                .strafeToLinearHeading(parkPose.position, parkPose.heading)
+
                 .build());
 
         meepMeep.setBackground(MeepMeep.Background.FIELD_INTO_THE_DEEP_JUICE_DARK)

@@ -1,5 +1,9 @@
 package org.firstinspires.ftc.teamcode;
 
+import static org.firstinspires.ftc.teamcode.RobotConstants.PID_ERROR_TOLERANCE;
+import static org.firstinspires.ftc.teamcode.RobotConstants.SLIDE_HIGH_BASKET_POS;
+import static org.firstinspires.ftc.teamcode.RobotConstants.SLIDE_REST_POS;
+
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -11,6 +15,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 public class slide_pidf_testing extends LinearOpMode {
     DcMotor slideMotor;
     Servo swing;
+
+    PIDFController slidePID;
 
     private double lastError = 0;
     private double integralSum = 0;
@@ -27,14 +33,14 @@ public class slide_pidf_testing extends LinearOpMode {
         swing.setDirection(Servo.Direction.FORWARD);
         slideMotor = hardwareMap.get(DcMotor.class, "slideMotor");
 
-
+        Servo claw = hardwareMap.get(Servo.class, "claw");
 
         slideMotor.setDirection(DcMotor.Direction.REVERSE);
         slideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         slideMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         slideMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        PIDFController slidePID = new PIDFController(
+        slidePID = new PIDFController(
                 RobotConstants.SLIDE_kP,
                 RobotConstants.SLIDE_kI,
                 RobotConstants.SLIDE_kD,
@@ -49,43 +55,31 @@ public class slide_pidf_testing extends LinearOpMode {
 
         waitForStart();
 
+        claw.setPosition(RobotConstants.CLAW_CLOSE);
+
         swing.setPosition(RobotConstants.SWING_UP);
 
         while(opModeIsActive()) {
+
             if(gamepad1.a) {
-                extend = true;
-
-                target = RobotConstants.SLIDE_HIGH_BASKET_POS;
-
-            } else if (gamepad1.b) {
-                extend = false;
-                target = RobotConstants.SLIDE_REST_POS;
+                target = SLIDE_HIGH_BASKET_POS;
+            } else if (gamepad1.b)  {
+                target = SLIDE_REST_POS;
+            }
+            if(!(slideMotor.getCurrentPosition()>(target-PID_ERROR_TOLERANCE) &&
+                    slideMotor.getCurrentPosition()<(target+PID_ERROR_TOLERANCE))) {
+                slideMotor.setPower(slidePID.calculate(target, slideMotor.getCurrentPosition()));
+            } else {
+                telemetry.addLine("at target");
+                slideMotor.setPower(RobotConstants.SLIDE_kF);
             }
 
             telemetry.addData("slideCurrentPosition", slideMotor.getCurrentPosition());
-            telemetry.addData("slideTarget", RobotConstants.SLIDE_HIGH_BASKET_POS);
+            telemetry.addData("slideTarget", SLIDE_HIGH_BASKET_POS);
             telemetry.addData("asd", 0.0);
             telemetry.addLine(slideMotor.getCurrentPosition()+"");
 
             telemetry.update();
-
-            armAction();
-        }
-    }
-
-    public void armAction() {
-        if(extend) {
-            slideMotor.setPower(calculate(RobotConstants.SLIDE_HIGH_BASKET_POS,
-                    slideMotor.getCurrentPosition(), RobotConstants.SLIDE_kP,
-                    RobotConstants.SLIDE_kI, RobotConstants.SLIDE_kD,
-                    RobotConstants.SLIDE_kF));
-
-        } else {
-            slideMotor.setPower(calculate(RobotConstants.SLIDE_REST_POS,
-                    slideMotor.getCurrentPosition(), RobotConstants.SLIDE_kP,
-                    RobotConstants.SLIDE_kI, RobotConstants.SLIDE_kD,
-                    RobotConstants.SLIDE_kF));
-
         }
     }
 
