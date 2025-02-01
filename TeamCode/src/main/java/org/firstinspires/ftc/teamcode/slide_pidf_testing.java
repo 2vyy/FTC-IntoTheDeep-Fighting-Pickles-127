@@ -47,8 +47,6 @@ public class slide_pidf_testing extends LinearOpMode {
                 RobotConstants.SLIDE_kF
         );
 
-
-
         //ftc dashboard
         dashboard = FtcDashboard.getInstance();
         telemetry = dashboard.getTelemetry();

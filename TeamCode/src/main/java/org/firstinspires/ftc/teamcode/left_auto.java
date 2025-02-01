@@ -43,15 +43,15 @@ public class left_auto extends LinearOpMode {
         slideMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         slideMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        Pose2d initialPose = new Pose2d(-32, -61, Math.toRadians(180));
-        Pose2d outerbasketPose = new Pose2d(-44, -44, Math.toRadians(235));
-        Pose2d innerBasketPose = new Pose2d(-51, -51, Math.toRadians(235));
-        Pose2d innerSamplePose = new Pose2d(-50, -44, Math.toRadians(90));
-        Pose2d centerSamplePose = new Pose2d(-60.5, -44, Math.toRadians(90));
-        Pose2d outerSamplePose = new Pose2d(-47, -26.5, Math.toRadians(180));
-        Pose2d outerSampleSecondPose = new Pose2d(-52, -27.5, Math.toRadians(180));
+        Pose2d initialPose = new Pose2d(-32, -61, Math.toRadians(178));
+        Pose2d outerbasketPose = new Pose2d(-44, -44, Math.toRadians(225));
+        Pose2d innerBasketPose = new Pose2d(-49, -49, Math.toRadians(225));
+        Pose2d innerSamplePose = new Pose2d(-49, -43, Math.toRadians(90));
+        Pose2d centerSamplePose = new Pose2d(-62, -43, Math.toRadians(90));
+        Pose2d outerSamplePose = new Pose2d(-46, -26, Math.toRadians(180));
+        Pose2d outerSampleSecondPose = new Pose2d(-50.5, -26, Math.toRadians(180));
         Pose2d parkingPose = new Pose2d(-36, 0, Math.toRadians(0));
-        Pose2d finalPark = new Pose2d(-28, 0, Math.toRadians(0));
+        Pose2d finalPark = new Pose2d(-27, 0, Math.toRadians(0));
 
         SparkFunOTOSDrive drive = new SparkFunOTOSDrive(hardwareMap, initialPose);
 
@@ -119,7 +119,6 @@ public class left_auto extends LinearOpMode {
 
         Action a_parkToBar = parkToBar.build();
 
-
         Action a_basketToPark = basketToPark.build();
 
         waitForStart();
@@ -128,7 +127,7 @@ public class left_auto extends LinearOpMode {
             new SequentialAction(
                 new ServoAction(claw, RobotConstants.CLAW_CLOSE),
                 new ServoAction(swing, RobotConstants.SWING_UP),
-                new SleepAction(0.5),
+                new SleepAction(0.25),
                 new ParallelAction(
                     a_startToBasket,
                     slideToPosition(RobotConstants.SLIDE_HIGH_BASKET_POS)
@@ -137,7 +136,7 @@ public class left_auto extends LinearOpMode {
                     a_outerBasketToInnerBasket,
                     new SleepAction(0.15),
                     new ServoAction(claw, RobotConstants.CLAW_OPEN),
-                    new SleepAction(0.5),
+                    new SleepAction(0.25),
                     a_innerBasketToOuterBasket
                 ),
 
@@ -160,7 +159,7 @@ public class left_auto extends LinearOpMode {
                     a_outerBasketToInnerBasketforInnerSample,
                     new SleepAction(0.15),
                     new ServoAction(claw, RobotConstants.CLAW_OPEN),
-                    new SleepAction(0.5),
+                    new SleepAction(0.25),
                     a_innerBasketToOuterBasketforInnerSample
                 ),
 
@@ -169,11 +168,11 @@ public class left_auto extends LinearOpMode {
                         slideToPosition(RobotConstants.SLIDE_REST_POS)
                 ),
                 new ServoAction(swing, RobotConstants.SWING_AUTO_SAMPLE),
-                new SleepAction(0.5),
+                new SleepAction(0.4),
                 new ServoAction(claw, RobotConstants.CLAW_CLOSE),
-                new SleepAction(0.5),
+                new SleepAction(0.25),
                 new ServoAction(swing, RobotConstants.SWING_UP),
-                new SleepAction(0.5),
+                new SleepAction(0.25),
                 new ParallelAction(
                         a_centerSampleToBasket,
                         slideToPosition(RobotConstants.SLIDE_HIGH_BASKET_POS)
@@ -182,17 +181,14 @@ public class left_auto extends LinearOpMode {
                         a_outerBasketToInnerBasketforCenterSample,
                         new SleepAction(0.15),
                         new ServoAction(claw, RobotConstants.CLAW_OPEN),
-                        new SleepAction(0.5),
+                        new SleepAction(0.25),
                         a_innerBasketToOuterBasketforCenterSample
                 ),
 
                 new ParallelAction(
                         a_basketToOuterSample,
                         slideToPosition(RobotConstants.SLIDE_REST_POS),
-                        new SequentialAction(
-                                new SleepAction(0.5),
-                                new ServoAction(swing, RobotConstants.SWING_AUTO_SAMPLE)
-                        )
+                        new ServoAction(swing, RobotConstants.SWING_AUTO_SAMPLE)
                 ),
                 new SleepAction(0.25),
                 a_outerSampleToSecondPos,
@@ -201,7 +197,7 @@ public class left_auto extends LinearOpMode {
                 new SleepAction(0.25),
                 a_secondPosToOuterSample,
                 new ServoAction(swing, RobotConstants.SWING_UP),
-                new SleepAction(0.5),
+                new SleepAction(0.25),
                 new ParallelAction(
                         a_outerSampleToBasket,
                         slideToPosition(RobotConstants.SLIDE_HIGH_BASKET_POS)
@@ -210,7 +206,7 @@ public class left_auto extends LinearOpMode {
                         a_outerBasketToInnerBasketforOuterSample,
                         new SleepAction(0.15),
                         new ServoAction(claw, RobotConstants.CLAW_OPEN),
-                        new SleepAction(0.5),
+                        new SleepAction(0.25),
                         a_innerBasketToOuterBasketforOuterSample
                 ),
 
@@ -218,7 +214,7 @@ public class left_auto extends LinearOpMode {
                         a_basketToPark,
                         slideToPosition(RobotConstants.SLIDE_REST_POS),
                         new SequentialAction(
-                                new SleepAction(0.3),
+                                new ServoAction(claw, RobotConstants.CLAW_CLOSE),
                                 new ServoAction(swing, RobotConstants.SWING_AUTO_PARK)
                         )
                 ),
@@ -247,7 +243,7 @@ public class left_auto extends LinearOpMode {
             }
 
             if((slideMotor.getCurrentPosition()>(distance-distanceTolerance) &&
-                    slideMotor.getCurrentPosition()<(distance+distanceTolerance) || this.time.seconds()>3.0)) {
+                    slideMotor.getCurrentPosition()<(distance+distanceTolerance) || this.time.seconds()>2.0)) {
                 slideMotor.setPower(RobotConstants.SLIDE_kF);
                 return false;
             } else {

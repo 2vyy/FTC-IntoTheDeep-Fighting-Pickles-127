@@ -74,6 +74,9 @@ public class real_teleop_one_driver extends LinearOpMode {
             } else if (gamepad1.dpad_left) {
                 telemetry.addLine("moving down");
                 swing.setPosition(RobotConstants.SWING_VERY_DOWN);
+            } else if (gamepad1.dpad_right) {
+                telemetry.addLine("moving down");
+                swing.setPosition(RobotConstants.SWING_AUTO_SPECIMEN);
             } else if(gamepad1.start) {
                 telemetry.addLine("moving to specimen");
                 swing.setPosition(RobotConstants.SWING_SPECIMEN);
@@ -85,29 +88,38 @@ public class real_teleop_one_driver extends LinearOpMode {
     }
 
     public void slideAction() {
-        if(gamepad1.dpad_up) {
+        if(gamepad1.dpad_up && gamepad1.left_bumper) {
+            is_PIDF_Active = true;
+            targetPosition = RobotConstants.SLIDE_HIGH_BASKET_POS;
+        } else if(gamepad1.dpad_down && gamepad1.left_bumper) {
+            is_PIDF_Active = true;
+            targetPosition = RobotConstants.SLIDE_REST_POS;
+        } else if(gamepad1.dpad_up) {
             is_PIDF_Active = false;
-            slideMotor.setPower(RobotConstants.SLIDE_SPEED);
+            slideMotor.setPower(1 * RobotConstants.SLIDE_SPEED);
         } else if(gamepad1.dpad_down) {
             is_PIDF_Active = false;
             slideMotor.setPower(-1 * RobotConstants.SLIDE_SPEED);
-        } else {
+        }  else if (!is_PIDF_Active){
             slideMotor.setPower(RobotConstants.SLIDE_kF);
         }
 
-//        } else if (gamepad1.dpad_left) {
-//            is_PIDF_Active = true;
-//            targetPosition = RobotConstants.SLIDE_HIGH_BASKET_POS;
-//        }
-////        } else if (gamepad1.dpad_right) {
-////            is_PIDF_Active = true;
-////            targetPosition = RobotConstants.SLIDE_HIGH_BAR_POS;
-////        } else if (gamepad1.left_bumper) {
-////            is_PIDF_Active = true;
-////            targetPosition = RobotConstants.SLIDE_REST_POS;
-////        } else if (!is_PIDF_Active) {
-////            slideMotor.setPower(RobotConstants.SLIDE_kF);
-////        }
+        if(is_PIDF_Active) {
+            if (Math.abs(slideMotor.getCurrentPosition() - targetPosition) < RobotConstants.PID_ERROR_TOLERANCE) {
+                is_PIDF_Active = false;
+            } else {
+                slideMotor.setPower(
+                    slidePIDF.calculate(
+                        targetPosition,
+                        slideMotor.getCurrentPosition()
+                    )
+                );
+            }
+        }
+
+
+
+
 //
 //        if(is_PIDF_Active) {
 //            if (Math.abs(slideMotor.getCurrentPosition() - targetPosition) < RobotConstants.PID_ERROR_TOLERANCE) {

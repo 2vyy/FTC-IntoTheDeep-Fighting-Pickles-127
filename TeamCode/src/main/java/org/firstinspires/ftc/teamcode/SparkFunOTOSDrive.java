@@ -60,7 +60,7 @@ public class SparkFunOTOSDrive extends MecanumDrive {
         // inverse of the error. For example, if you move the robot 100 inches and
         // the sensor reports 103 inches, set the linear scalar to 100/103 = 0.971
         public double linearScalar = 111.0/108.0; //96.0/84.0;
-        public double angularScalar = 0.9906; //3600.0/3642.0;
+        public double angularScalar = 1.0026; //0.9906;
     }
 
     public static SparkFunOTOSDrive.Params PARAMS = new SparkFunOTOSDrive.Params();

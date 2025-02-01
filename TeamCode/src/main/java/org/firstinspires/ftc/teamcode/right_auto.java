@@ -218,7 +218,7 @@ public class right_auto extends LinearOpMode {
         slideMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
         Pose2d initialPose = new Pose2d(1, -61, Math.toRadians(90));
-        Pose2d centerBarPose = new Pose2d(1, -34, Math.toRadians(90));
+        Pose2d centerBarPose = new Pose2d(1, -31, Math.toRadians(90));
         Pose2d centerBarSecondPose = new Pose2d(1, -50, Math.toRadians(90));
 
         Pose2d firstSplinePose = new Pose2d(30, -20, Math.toRadians(90));
@@ -227,81 +227,16 @@ public class right_auto extends LinearOpMode {
 
         Pose2d cornerToSecondSample = new Pose2d(41, -20, Math.toRadians(90));
         Pose2d secondSampleSpline = new Pose2d(50, -13, Math.toRadians(90));
-        Pose2d secondCornerZone = new Pose2d(50, -52, Math.toRadians(90));
+        Pose2d secondCornerZone = new Pose2d(50, -54, Math.toRadians(90));
+
+        Pose2d shiftOverCornerZone = new Pose2d(37, -54, Math.toRadians(90));
+
 
         Pose2d cornerToThirdSample = new Pose2d(50, -20, Math.toRadians(90));
         Pose2d thirdSampleSpline = new Pose2d(57, -13, Math.toRadians(90));
         Pose2d thirdCornerZone = new Pose2d(57, -52, Math.toRadians(90));
-        Pose2d cornerZoneSecondPose = new Pose2d(57, -40, Math.toRadians(90));
-        Pose2d finalPark = new Pose2d(57, -54, Math.toRadians(90));
-
-
-
 
         SparkFunOTOSDrive drive = new SparkFunOTOSDrive(hardwareMap, initialPose);
-
-//        TrajectoryActionBuilder dropOffSample = drive.actionBuilder(initialPose)
-//                .stopAndAdd(new ServoAction(claw, RobotConstants.CLAW_CLOSE))
-//                .waitSeconds(0.25)
-//
-//                .strafeToLinearHeading(new Vector2d(-47, -47), Math.toRadians(235))
-//                .waitSeconds(0.25)
-//                .stopAndAdd(new ServoAction(swing, RobotConstants.SWING_UP))
-//                .waitSeconds(1.25)
-//                .stopAndAdd(new MotorAction(slideMotor, slidePID, RobotConstants.SLIDE_HIGH_BASKET_POS))
-//                .waitSeconds(0.5)
-//                .strafeToLinearHeading(new Vector2d(-51, -51), Math.toRadians(235))
-//                .waitSeconds(0.5)
-//                .stopAndAdd(new ServoAction(claw, RobotConstants.CLAW_OPEN))
-//                .waitSeconds(0.25)
-//                .strafeToLinearHeading(new Vector2d(-47, -47), Math.toRadians(235))
-//                .waitSeconds(0.25)
-//                .stopAndAdd(new MotorAction(slideMotor, slidePID, RobotConstants.SLIDE_REST_POS))
-//                .waitSeconds(0.5)
-//
-//                .strafeToLinearHeading(new Vector2d(-51.5, -39), Math.toRadians(90))
-//                .waitSeconds(0.25)
-//                .stopAndAdd(new ServoAction(swing, RobotConstants.SWING_AUTO_SAMPLE))
-//                .waitSeconds(1)
-//                .stopAndAdd(new ServoAction(claw, RobotConstants.CLAW_CLOSE))
-//                .waitSeconds(0.25)
-//                .stopAndAdd(new ServoAction(swing, RobotConstants.SWING_UP))
-//                .waitSeconds(0.5)
-//                .strafeToLinearHeading(new Vector2d(-47, -47), Math.toRadians(235))
-//                .waitSeconds(0.5)
-//                .stopAndAdd(new MotorAction(slideMotor, slidePID, RobotConstants.SLIDE_HIGH_BASKET_POS))
-//                .waitSeconds(0.5)
-//                .strafeToLinearHeading(new Vector2d(-51, -51), Math.toRadians(235))
-//                .waitSeconds(0.5)
-//                .stopAndAdd(new ServoAction(claw, RobotConstants.CLAW_OPEN))
-//                .waitSeconds(0.25)
-//                .strafeToLinearHeading(new Vector2d(-47, -47), Math.toRadians(235))
-//                .waitSeconds(0.25)
-//                .stopAndAdd(new MotorAction(slideMotor, slidePID, RobotConstants.SLIDE_REST_POS))
-//                .waitSeconds(0.5)
-//
-//                .strafeToLinearHeading(new Vector2d(-58.5, -39), Math.toRadians(90))
-//                .waitSeconds(0.25)
-//                .stopAndAdd(new ServoAction(swing, RobotConstants.SWING_AUTO_SAMPLE))
-//                .waitSeconds(1);
-//                .stopAndAdd(new ServoAction(claw, RobotConstants.CLAW_CLOSE))
-//                .waitSeconds(0.25)
-//                .stopAndAdd(new ServoAction(swing, RobotConstants.SWING_UP))
-//                .waitSeconds(0.5)
-//                .strafeToLinearHeading(new Vector2d(-47, -47), Math.toRadians(235))
-//                .waitSeconds(0.5)
-//                .stopAndAdd(new MotorAction(slideMotor, slidePID, RobotConstants.SLIDE_HIGH_BASKET_POS))
-//                .waitSeconds(0.5)
-//                .strafeToLinearHeading(new Vector2d(-51, -51), Math.toRadians(235))
-//                .waitSeconds(0.5)
-//                .stopAndAdd(new ServoAction(claw, RobotConstants.CLAW_OPEN))
-//                .waitSeconds(0.25)
-//                .strafeToLinearHeading(new Vector2d(-47, -47), Math.toRadians(235))
-//                .waitSeconds(0.25)
-//                .stopAndAdd(new MotorAction(slideMotor, slidePID, RobotConstants.SLIDE_REST_POS))
-//                .waitSeconds(0.5);
-
-//        Action a_dropOffSample = dropOffSample.build();
 
         TrajectoryActionBuilder goToCenter = drive.actionBuilder(initialPose)
                 .strafeToConstantHeading(centerBarPose.position);
@@ -312,7 +247,6 @@ public class right_auto extends LinearOpMode {
         Action a_outFromCenter = outFromCenter.build();
 
         TrajectoryActionBuilder barToInnerSample = drive.actionBuilder(centerBarSecondPose)
-//                .strafeToLinearHeading(innerSamplePose.position, innerSamplePose.heading);
                 .setReversed(true)
                 .splineToConstantHeading(firstSplinePose.position, Math.toRadians(90))
                 .setReversed(false)
@@ -326,49 +260,15 @@ public class right_auto extends LinearOpMode {
         TrajectoryActionBuilder toSecondSample = drive.actionBuilder(firstCornerZone)
                 .strafeToConstantHeading(cornerToSecondSample.position)
                 .splineToConstantHeading(secondSampleSpline.position, Math.toRadians(0))
-                .strafeToConstantHeading(secondCornerZone.position);
+                .strafeToConstantHeading(secondCornerZone.position)
+                .strafeToConstantHeading(shiftOverCornerZone.position);
         Action a_toSecondSample = toSecondSample.build();
 
-        TrajectoryActionBuilder toThirdSample = drive.actionBuilder(secondCornerZone)
-                .strafeToConstantHeading(cornerToThirdSample.position)
-                .splineToConstantHeading(thirdSampleSpline.position, Math.toRadians(0))
-                .strafeToConstantHeading(thirdCornerZone.position);
-//                .strafeToConstantHeading(cornerZoneSecondPose.position);
-        Action a_toThirdSample = toThirdSample.build();
-//
-//        TrajectoryActionBuilder cornerToCenterSample = drive.actionBuilder(cornerZone)
-//                .strafeToLinearHeading(centerSamplePose.position, centerSamplePose.heading);
-//        Action a_cornerToCenterSample = cornerToCenterSample.build();
-//
-//        TrajectoryActionBuilder centerSampleToCorner = drive.actionBuilder(centerSamplePose)
-//                .strafeToLinearHeading(cornerZone.position, cornerZone.heading);
-//        Action a_centerSampleToCorner = centerSampleToCorner.build();
-//
-//        TrajectoryActionBuilder cornerToOuterSample = drive.actionBuilder(cornerZone)
-//                .strafeToLinearHeading(outerSamplePose.position, outerSamplePose.heading);
-//        Action a_cornerToOuterSample = cornerToOuterSample.build();
-//
-//        TrajectoryActionBuilder outerSampleToSecondOuterSample = drive.actionBuilder(outerSamplePose)
-//                .strafeToLinearHeading(outerSampleSecondPose.position, outerSampleSecondPose.heading);
-//        Action a_outerSampleToSecondOuterSample = outerSampleToSecondOuterSample.build();
-//
-//        TrajectoryActionBuilder secondOuterSampleToOuterSample = drive.actionBuilder(outerSampleSecondPose)
-//                .strafeToLinearHeading(outerSamplePose.position, outerSamplePose.heading);
-//        Action a_secondOuterSampleToOuterSample = secondOuterSampleToOuterSample.build();
-//
-//        TrajectoryActionBuilder outerSampleToCorner = drive.actionBuilder(outerSamplePose)
-//                .strafeToLinearHeading(cornerZone.position, cornerZone.heading);
-//        Action a_outerSampleToCorner = outerSampleToCorner.build();
-
-
-
-//        TrajectoryActionBuilder moveOutOfCorner = drive.actionBuilder(cornerZone)
-//                .strafeToLinearHeading(cornerZoneSecondPose.position, cornerZoneSecondPose.heading);
-//        Action a_moveOutOfCorner = moveOutOfCorner.build();
-//
-//        TrajectoryActionBuilder park = drive.actionBuilder(cornerZoneSecondPose)
-//                .strafeToLinearHeading(cornerZone.position, cornerZone.heading);
-//        Action a_park = park.build();
+//        TrajectoryActionBuilder toThirdSample = drive.actionBuilder(secondCornerZone)
+//                .strafeToConstantHeading(cornerToThirdSample.position)
+//                .splineToConstantHeading(thirdSampleSpline.position, Math.toRadians(0))
+//                .strafeToConstantHeading(thirdCornerZone.position);
+//        Action a_toThirdSample = toThirdSample.build();
 
         waitForStart();
 
@@ -392,8 +292,9 @@ public class right_auto extends LinearOpMode {
                 ),
                 a_barToInnerSample,
                 a_innerSampleToCorner,
+                new ServoAction(swing, RobotConstants.SWING_AUTO_SPECIMEN),
                 a_toSecondSample
-//                a_toThirdSample
+                    //                a_toThirdSample
             )
         );
     }
