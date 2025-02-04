@@ -1,29 +1,52 @@
 package org.firstinspires.ftc.teamcode;
 
+
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
+import com.acmerobotics.roadrunner.Action;
+import com.acmerobotics.roadrunner.Pose2d;
+import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.robot.Robot;
+import com.qualcomm.robotcore.util.ElapsedTime;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @TeleOp(name="A_real_teleop_one_driver")
 public class real_teleop_one_driver extends LinearOpMode {
-    public DcMotor frontLeftMotor;
-    public DcMotor frontRightMotor;
-    public DcMotor backLeftMotor;
-    public DcMotor backRightMotor;
+    private DcMotor frontLeftMotor;
+    private DcMotor frontRightMotor;
+    private DcMotor backLeftMotor;
+    private DcMotor backRightMotor;
 
-    public DcMotor slideMotor;
+    private DcMotor slideMotor;
 
-    public PIDFController slidePIDF;
-    public boolean is_PIDF_Active = false;
+    private PIDFController slidePIDF;
+    private boolean is_PIDF_Active = false;
 
-    public double powerModifier = 1.0;
-    public int targetPosition = RobotConstants.SLIDE_REST_POS;
+    private double powerModifier = 1.0;
+    private int targetPosition = RobotConstants.SLIDE_REST_POS;
+
+    FtcDashboard dash = FtcDashboard.getInstance();
+    List<Action> runningActions = new ArrayList<>();
+
+    Pose2d centerPos = new Pose2d(-28, 0, Math.toRadians(0));
+    Pose2d outerbasketPos = new Pose2d(-44, -44, Math.toRadians(225));
+
+    Pose2d finalPark = new Pose2d(-27, 0, Math.toRadians(0));
+    SparkFunOTOSDrive drive;
+
+    ElapsedTime actionInputBuffer = new ElapsedTime();
 
     @Override
     public void runOpMode() throws InterruptedException {
+        drive = new SparkFunOTOSDrive(hardwareMap, finalPark);
+
         frontLeftMotor = hardwareMap.get(DcMotor.class, "frontLeft");
         frontRightMotor = hardwareMap.get(DcMotor.class, "frontRight");
         backLeftMotor = hardwareMap.get(DcMotor.class, "backLeft");
@@ -52,9 +75,9 @@ public class real_teleop_one_driver extends LinearOpMode {
 
         waitForStart();
 
-
         while(opModeIsActive()) {
             motorAction();
+            roadRunnerAction();
             slideAction();
 
             if(gamepad1.b) {
@@ -116,24 +139,6 @@ public class real_teleop_one_driver extends LinearOpMode {
                 );
             }
         }
-
-
-
-
-//
-//        if(is_PIDF_Active) {
-//            if (Math.abs(slideMotor.getCurrentPosition() - targetPosition) < RobotConstants.PID_ERROR_TOLERANCE) {
-//                slideMotor.setPower(RobotConstants.SLIDE_kF);
-//                is_PIDF_Active = false;
-//            } else {
-//                slideMotor.setPower(
-//                        slidePIDF.calculate(
-//                                targetPosition,
-//                                slideMotor.getCurrentPosition()
-//                        )
-//                );
-//            }
-//        }
     }
 
     public void motorAction() {
@@ -160,5 +165,45 @@ public class real_teleop_one_driver extends LinearOpMode {
         backLeftMotor.setPower(backLeftPower * powerModifier);
         frontRightMotor.setPower(frontRightPower * powerModifier);
         backRightMotor.setPower(backRightPower * powerModifier);
+    }
+
+    public void roadRunnerAction() {
+
+//        RobotConstants.currentPosition = drive.pose;
+
+        TrajectoryActionBuilder centerToBasket = drive.actionBuilder(RobotConstants.currentPosition)
+                .strafeToLinearHeading(outerbasketPos.position, outerbasketPos.heading);
+
+        TrajectoryActionBuilder basketToCenter = drive.actionBuilder(RobotConstants.currentPosition)
+                .strafeToLinearHeading(centerPos.position, centerPos.heading);
+
+        Action a_centerToBasket = centerToBasket.build();
+        Action a_basketToCenter = basketToCenter.build();
+
+        if(gamepad1.back && actionInputBuffer.time() > 2.0) {
+            runningActions.add(a_centerToBasket);
+            actionInputBuffer.reset();
+            telemetry.addLine("moving from center to basket");
+        } else if (gamepad1.ps && actionInputBuffer.time() > 2.0) {
+            runningActions.add(a_basketToCenter);
+            actionInputBuffer.reset();
+            telemetry.addLine("moving from basket to center");
+        }
+
+        telemetry.addLine("# of RR Actions: "+runningActions.size());
+        telemetry.update();
+
+        TelemetryPacket packet = new TelemetryPacket();
+
+        List<Action> newActions = new ArrayList<>();
+        for (Action action : runningActions) {
+            action.preview(packet.fieldOverlay());
+            if (action.run(packet)) {
+                newActions.add(action);
+            }
+        }
+        runningActions = newActions;
+
+        dash.sendTelemetryPacket(packet);
     }
 }
