@@ -8,6 +8,9 @@ import com.noahbres.meepmeep.roadrunner.DefaultBotBuilder;
 import com.noahbres.meepmeep.roadrunner.entity.RoadRunnerBotEntity;
 
 public class MeepMeepTesting {
+
+
+
     public static void main(String[] args) {
         MeepMeep meepMeep = new MeepMeep(600);
 
@@ -59,9 +62,13 @@ public class MeepMeepTesting {
                 .build());
 */
         myBot.runAction(myBot.getDrive().actionBuilder(initialPose)
+                //Start with Specimen In Arm Hand
                 .strafeToLinearHeading(centerBarPose.position, centerBarPose.heading)
+                //Place Specimen
                 .strafeTo(new Vector2d(5,-42))
-                .strafeToLinearHeading(centerBarSecondPose.position, centerBarSecondPose.heading)
+                .strafeTo(new Vector2d(35,-42))
+
+                //.strafeToLinearHeading(centerBarSecondPose.position, centerBarSecondPose.heading)
 
                 .splineToConstantHeading(innerSplinePose, Math.toRadians(90))
                 .splineToConstantHeading(innerSplineSecondPose, Math.toRadians(0))
