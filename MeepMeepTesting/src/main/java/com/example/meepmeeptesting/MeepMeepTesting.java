@@ -20,7 +20,7 @@ public class MeepMeepTesting {
         Vector2d innerSplinePose = new Vector2d(35, -20);
         Vector2d innerSplineSecondPose = new Vector2d(45.5, -15);
         Vector2d centerSplinePose = new Vector2d(56, -20);
-        Vector2d outerSplinePose = new Vector2d(62, -20);
+        Vector2d outerSplinePose = new Vector2d(58, -20);
 
 
         Pose2d innerSamplePose = new Pose2d(45.5, -12, Math.toRadians(90));

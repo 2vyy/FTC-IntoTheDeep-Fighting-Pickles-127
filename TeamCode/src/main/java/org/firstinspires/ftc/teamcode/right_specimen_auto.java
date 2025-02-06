@@ -64,7 +64,7 @@ public class right_specimen_auto extends LinearOpMode {
 
         Pose2d innerSamplePushPose = new Pose2d(45.5, -55, Math.toRadians(90));
         Pose2d centerSamplePushPose = new Pose2d(56, -55, Math.toRadians(90));
-        Pose2d outerSamplePushPose = new Pose2d(62, -55, Math.toRadians(90));
+        Pose2d outerSamplePushPose = new Pose2d(58, -55, Math.toRadians(90));
 
         Pose2d waitPose = new Pose2d(55, -40, Math.toRadians(90));
         Pose2d parkPose = new Pose2d(55, -61, Math.toRadians(90));
@@ -176,7 +176,8 @@ public class right_specimen_auto extends LinearOpMode {
                         ),
                         new ParallelAction(
                             a_backOutFromBar,
-                            slideToPosition(RobotConstants.SLIDE_REST_POS)
+                            slideToPosition(RobotConstants.SLIDE_REST_POS),
+                                new SleepAction(0.35)
                         ),
 
                         new SequentialAction( // drop off sample
