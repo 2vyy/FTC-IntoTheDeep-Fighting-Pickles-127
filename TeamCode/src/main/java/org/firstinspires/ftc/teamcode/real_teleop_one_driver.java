@@ -6,6 +6,7 @@ import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
+import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -32,20 +33,20 @@ public class real_teleop_one_driver extends LinearOpMode {
     private double powerModifier = 1.0;
     private int targetPosition = RobotConstants.SLIDE_REST_POS;
 
-    FtcDashboard dash = FtcDashboard.getInstance();
-    List<Action> runningActions = new ArrayList<>();
-
-    Pose2d centerPos = new Pose2d(-28, 0, Math.toRadians(0));
-    Pose2d outerbasketPos = new Pose2d(-44, -44, Math.toRadians(225));
-
-    Pose2d finalPark = new Pose2d(-27, 0, Math.toRadians(0));
-    SparkFunOTOSDrive drive;
+// roadrunner stuff
+//    FtcDashboard dash = FtcDashboard.getInstance();
+//    List<Action> runningActions = new ArrayList<>();
+//
+//    Pose2d centerPos = new Pose2d(-28, 0, Math.toRadians(0));
+//    Pose2d outerbasketPos = new Pose2d(-44, -44, Math.toRadians(225));
+//
+//    Pose2d finalPark = new Pose2d(-27, 0, Math.toRadians(0));
+//    SparkFunOTOSDrive drive;
 
     ElapsedTime actionInputBuffer = new ElapsedTime();
 
     @Override
     public void runOpMode() throws InterruptedException {
-        drive = new SparkFunOTOSDrive(hardwareMap, finalPark);
 
         frontLeftMotor = hardwareMap.get(DcMotor.class, "frontLeft");
         frontRightMotor = hardwareMap.get(DcMotor.class, "frontRight");
@@ -77,7 +78,6 @@ public class real_teleop_one_driver extends LinearOpMode {
 
         while(opModeIsActive()) {
             motorAction();
-            roadRunnerAction();
             slideAction();
 
             if(gamepad1.b) {
@@ -165,45 +165,5 @@ public class real_teleop_one_driver extends LinearOpMode {
         backLeftMotor.setPower(backLeftPower * powerModifier);
         frontRightMotor.setPower(frontRightPower * powerModifier);
         backRightMotor.setPower(backRightPower * powerModifier);
-    }
-
-    public void roadRunnerAction() {
-
-//        RobotConstants.currentPosition = drive.pose;
-
-        TrajectoryActionBuilder centerToBasket = drive.actionBuilder(RobotConstants.currentPosition)
-                .strafeToLinearHeading(outerbasketPos.position, outerbasketPos.heading);
-
-        TrajectoryActionBuilder basketToCenter = drive.actionBuilder(RobotConstants.currentPosition)
-                .strafeToLinearHeading(centerPos.position, centerPos.heading);
-
-        Action a_centerToBasket = centerToBasket.build();
-        Action a_basketToCenter = basketToCenter.build();
-
-        if(gamepad1.back && actionInputBuffer.time() > 2.0) {
-            runningActions.add(a_centerToBasket);
-            actionInputBuffer.reset();
-            telemetry.addLine("moving from center to basket");
-        } else if (gamepad1.ps && actionInputBuffer.time() > 2.0) {
-            runningActions.add(a_basketToCenter);
-            actionInputBuffer.reset();
-            telemetry.addLine("moving from basket to center");
-        }
-
-        telemetry.addLine("# of RR Actions: "+runningActions.size());
-        telemetry.update();
-
-        TelemetryPacket packet = new TelemetryPacket();
-
-        List<Action> newActions = new ArrayList<>();
-        for (Action action : runningActions) {
-            action.preview(packet.fieldOverlay());
-            if (action.run(packet)) {
-                newActions.add(action);
-            }
-        }
-        runningActions = newActions;
-
-        dash.sendTelemetryPacket(packet);
     }
 }

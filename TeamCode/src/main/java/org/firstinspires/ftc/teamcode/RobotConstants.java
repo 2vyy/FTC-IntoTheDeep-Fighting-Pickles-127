@@ -17,7 +17,7 @@ public class RobotConstants {
     public static double SLIDE_SPEED = 0.85;
 
     public static int SLIDE_HIGH_BASKET_POS = 3675;
-    public static int SLIDE_HIGH_BAR_POS = 999;
+    public static int SLIDE_HIGH_BAR_POS = 1125;
     public static int SLIDE_REST_POS = 5;
 
     // swing servo
@@ -29,8 +29,8 @@ public class RobotConstants {
     public static double SWING_AUTO_SPECIMEN = 0;
     public static double SWING_AUTO_PARK = 0.35;
     // claw
-    public static double CLAW_OPEN = 0.4;
-    public static double CLAW_CLOSE = 0.17;
+    public static double CLAW_OPEN = 0.7;
+    public static double CLAW_CLOSE = 0.45;
 
     public static Pose2d currentPosition = new Pose2d(-27, 0, Math.toRadians(0));
 }

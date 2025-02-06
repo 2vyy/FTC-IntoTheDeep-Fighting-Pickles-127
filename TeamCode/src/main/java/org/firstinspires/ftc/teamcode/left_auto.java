@@ -46,7 +46,7 @@ public class left_auto extends LinearOpMode {
         Pose2d initialPose = new Pose2d(-32, -61, Math.toRadians(178));
         Pose2d outerbasketPose = new Pose2d(-44, -44, Math.toRadians(225));
         Pose2d innerBasketPose = new Pose2d(-48, -50, Math.toRadians(225));
-        Pose2d innerSamplePose = new Pose2d(-49, -44, Math.toRadians(90));
+        Pose2d innerSamplePose = new Pose2d(-48, -44, Math.toRadians(90));
         Pose2d centerSamplePose = new Pose2d(-61.5, -43, Math.toRadians(90));
         Pose2d outerSamplePose = new Pose2d(-46, -26, Math.toRadians(180));
         Pose2d outerSampleSecondPose = new Pose2d(-50.5, -26, Math.toRadians(180));
@@ -54,8 +54,6 @@ public class left_auto extends LinearOpMode {
         Pose2d finalPark = new Pose2d(-27, 0, Math.toRadians(0));
 
         SparkFunOTOSDrive drive = new SparkFunOTOSDrive(hardwareMap, initialPose);
-
-//        RobotConstants.currentPosition = finalPark;
 
         TrajectoryActionBuilder startToBasket = drive.actionBuilder(initialPose)
                 .strafeToLinearHeading(outerbasketPose.position, outerbasketPose.heading);
