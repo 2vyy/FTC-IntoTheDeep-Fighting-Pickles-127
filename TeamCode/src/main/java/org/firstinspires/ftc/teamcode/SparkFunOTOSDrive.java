@@ -44,7 +44,6 @@ public class SparkFunOTOSDrive extends MecanumDrive {
         public SparkFunOTOS.Pose2D offset = new SparkFunOTOS.Pose2D(2.7093, 3.3822, Math.toRadians(179.1431/2));
         //maybe heading is -1.5868?
 
-
         // Here we can set the linear and angular scalars, which can compensate for
         // scaling issues with the sensor measurements. Note that as of firmware
         // version 1.0, these values will be lost after a power cycle, so you will
@@ -61,9 +60,8 @@ public class SparkFunOTOSDrive extends MecanumDrive {
         // multiple speeds to get an average, then set the linear scalar to the
         // inverse of the error. For example, if you move the robot 100 inches and
         // the sensor reports 103 inches, set the linear scalar to 100/103 = 0.971
-
         public double linearScalar = 111.0/108.0; //96.0/84.0;
-        public double angularScalar = 0.9906; //3600.0/3642.0;
+        public double angularScalar = 1.0026; //0.9906;
 
     }
 

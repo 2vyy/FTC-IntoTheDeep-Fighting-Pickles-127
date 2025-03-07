@@ -63,7 +63,6 @@ public class MecanumDrive {
                 RevHubOrientationOnRobot.UsbFacingDirection.RIGHT;
 
         // drive model parameters
-
         public double inPerTick = 1; // If you're using OTOS/Pinpoint leave this at 1 (all values will be in inches, 1 tick = 1 inch)
         public double lateralInPerTick = 0.7634125904935564; //0.7903706490650153; // Tune this with LateralRampLogger (even if you use OTOS/Pinpoint)
         public double trackWidthTicks = 14.44558009434572; //14.372749082015055;
@@ -84,10 +83,10 @@ public class MecanumDrive {
 
         // path controller gains
 
+
         public double axialGain = 8; //4;
         public double lateralGain = 5; //5;
         public double headingGain = 2; //2; // shared with turn
-
 
         public double axialVelGain = 0.0;
         public double lateralVelGain = 0.0;
@@ -143,10 +142,10 @@ public class MecanumDrive {
             // ACTUALLY LOOK AT THIS later
             // TODO: reverse encoders if needed
 
+
             leftFront.setDirection(DcMotor.Direction.REVERSE);
             leftBack.setDirection(DcMotor.Direction.REVERSE);
 //            leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
-
         }
 
         @Override
