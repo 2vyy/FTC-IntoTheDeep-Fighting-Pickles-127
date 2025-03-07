@@ -30,6 +30,7 @@ public class left_auto extends LinearOpMode {
             RobotConstants.SLIDE_kF
     );
 
+
     @Override
     public void runOpMode() throws InterruptedException {
         Servo swing = hardwareMap.get(Servo.class, "swing");
@@ -37,6 +38,7 @@ public class left_auto extends LinearOpMode {
 
         Servo claw = hardwareMap.get(Servo.class, "claw");
         slideMotor = hardwareMap.get(DcMotor.class, "slideMotor");
+
 
         slideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         slideMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -120,6 +122,7 @@ public class left_auto extends LinearOpMode {
         Action a_parkToBar = parkToBar.build();
 
         Action a_basketToPark = basketToPark.build();
+
 
         waitForStart();
 
@@ -236,6 +239,7 @@ public class left_auto extends LinearOpMode {
 
         @Override
         public boolean run(@NonNull TelemetryPacket telemetryPacket) {
+
             slideMotor.setPower(slidePID.calculate(distance, slideMotor.getCurrentPosition()));
             if(!cooked) {
                 cooked = true;
@@ -253,6 +257,7 @@ public class left_auto extends LinearOpMode {
     }
 
     public Action slideToPosition(int dist) { return new MotorAction(dist); }
+
 
     public class ServoAction implements Action {
         Servo servo;

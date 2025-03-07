@@ -7,6 +7,7 @@ import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
 import com.acmerobotics.roadrunner.ftc.Actions;
+
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -60,6 +61,7 @@ public class real_teleop_one_driver extends LinearOpMode {
 
         Servo swing = hardwareMap.get(Servo.class, "swing");
         Servo claw = hardwareMap.get(Servo.class, "claw");
+
         slideMotor = hardwareMap.get(DcMotor.class, "slideMotor");
         swing.setDirection(Servo.Direction.FORWARD);
 
@@ -80,6 +82,7 @@ public class real_teleop_one_driver extends LinearOpMode {
             motorAction();
             slideAction();
 
+
             if(gamepad1.b) {
                 telemetry.addLine("opening claw");
                 claw.setPosition(RobotConstants.CLAW_CLOSE);
@@ -97,9 +100,11 @@ public class real_teleop_one_driver extends LinearOpMode {
             } else if (gamepad1.dpad_left) {
                 telemetry.addLine("moving down");
                 swing.setPosition(RobotConstants.SWING_VERY_DOWN);
+
             } else if (gamepad1.dpad_right) {
                 telemetry.addLine("moving down");
                 swing.setPosition(RobotConstants.SWING_AUTO_SPECIMEN);
+
             } else if(gamepad1.start) {
                 telemetry.addLine("moving to specimen");
                 swing.setPosition(RobotConstants.SWING_SPECIMEN);
