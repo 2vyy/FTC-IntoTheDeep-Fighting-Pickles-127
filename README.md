@@ -1,7 +1,7 @@
 [Quick Link to TeamCode folder](https://github.com/2vyy/FTC-IntoTheDeep-Fighting-Pickles-127/tree/main/TeamCode/src/main/java/org/firstinspires/ftc/teamcode)
 
 ## Code Layout
-![image](https://github.com/user-attachments/assets/aaac81c7-af2c-41e6-8011-ee91b96e9e67)
+![FightingPickles Codebase](https://github.com/user-attachments/assets/1cb9370a-35d5-4d80-9159-b5f6eda2ffb9)
 
 ## Links
 * [Conceptual Introduction of PID Control](https://youtu.be/4Y7zG48uHRo?si=2XhRVeDYf7zzIsRo)
